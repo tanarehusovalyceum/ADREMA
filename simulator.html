@@ -318,16 +318,16 @@
             href="#" onclick="switchView('results'); return false;"><span id="t-nav-results">Call Results</span></a>
           <a id="nav-topography"
             class="text-xs text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors px-2.5 py-1 rounded-lg"
-            href="#" onclick="switchView('topography'); return false;"><span id="t-nav-topography">Topography</span></a>
+            href="#" onclick="switchView('topography'); return false;"><span id="t-nav-topography">Topografia</span></a>
           <a id="nav-metrics"
             class="hidden text-xs text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors px-2.5 py-1 rounded-lg"
-            href="#" onclick="switchView('admin-metrics'); return false;"><span id="t-nav-metrics">Metrics</span></a>
+            href="#" onclick="switchView('admin-metrics'); return false;"><span id="t-nav-metrics">Metriky</span></a>
           <a id="nav-bugs"
             class="hidden text-xs text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors px-2.5 py-1 rounded-lg"
-            href="#" onclick="switchView('admin-bugs'); return false;"><span id="t-nav-bugs">Bugs</span></a>
+            href="#" onclick="switchView('admin-bugs'); return false;"><span id="t-nav-bugs">Chyby</span></a>
           <a id="nav-feedback"
             class="hidden text-xs text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors px-2.5 py-1 rounded-lg"
-            href="#" onclick="switchView('admin-feedback'); return false;"><span id="t-nav-feedback">Feedback</span></a>
+            href="#" onclick="switchView('admin-feedback'); return false;"><span id="t-nav-feedback">Spätná väzba</span></a>
         </nav>
       </div>
       <div class="flex items-center gap-3">
@@ -445,8 +445,7 @@
             class="flex-[1.5] py-2.5 px-3 bg-error text-on-error font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 hover:opacity-90 transition-all active:scale-95 shadow-md shadow-error/10"><span
               class="material-symbols-outlined text-lg">call_end</span><span id="end-call-text">End Call</span></button>
         </div>
-        <div id="eleven-status" class="text-[10px] text-on-surface-variant text-center py-2 font-medium">Initializing
-          connection...</div>
+        <div id="eleven-status" class="text-[10px] text-on-surface-variant text-center py-2 font-medium">Pripravené na hovor</div>
       </div>
     </section>
 
@@ -527,7 +526,7 @@
             <div class="bg-surface-container p-3.5 rounded-xl space-y-2">
               <h3 id="rescue-verification-title"
                 class="text-[9px] font-bold text-on-surface-variant uppercase tracking-widest border-b border-outline-variant/20 pb-1.5">
-                Rescue Verification</h3>
+                Overenie zásahu</h3>
               <div class="space-y-1.5">
                 <label class="flex items-center gap-2.5 cursor-pointer group"><input
                     class="w-3.5 h-3.5 rounded border-none bg-surface-container-highest text-primary focus:ring-primary"
@@ -582,7 +581,7 @@
         <div class="flex gap-3">
           <div class="bg-surface-container-low p-4 rounded-lg min-w-[160px] border border-outline-variant/30">
             <span id="t-avg-adherence" class="text-on-surface-variant text-[10px] font-bold uppercase tracking-wider block mb-1">Avg.
-              Adherence to protocol</span>
+              Dodržanie protokolu</span>
             <div class="flex items-baseline gap-1.5"><span id="avg-accuracy"
                 class="text-2xl font-black text-primary tracking-tight">—</span><span
                 class="text-secondary font-bold text-[11px]" id="avg-accuracy-delta"></span></div>
@@ -610,11 +609,11 @@
           </div>
           <div class="flex gap-1.5">
             <button onclick="filterSessions('all')" id="filter-all"
-              class="flex-1 py-1.5 px-2 text-[10px] font-bold rounded-md bg-surface-container text-on-surface hover:bg-surface-container-high transition-colors">All</button>
+              class="flex-1 py-1.5 px-2 text-[10px] font-bold rounded-md bg-surface-container text-on-surface hover:bg-surface-container-high transition-colors">Všetky</button>
             <button onclick="filterSessions('success')" id="filter-success"
-              class="flex-1 py-1.5 px-2 text-[10px] font-bold rounded-md bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-400 transition-colors">Success</button>
+              class="flex-1 py-1.5 px-2 text-[10px] font-bold rounded-md bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-400 transition-colors">Úspešné</button>
             <button onclick="filterSessions('failed')" id="filter-failed"
-              class="flex-1 py-1.5 px-2 text-[10px] font-bold rounded-md bg-red-200 dark:bg-red-900/60 text-red-800 dark:text-red-300 transition-colors">Failed</button>
+              class="flex-1 py-1.5 px-2 text-[10px] font-bold rounded-md bg-red-200 dark:bg-red-900/60 text-red-800 dark:text-red-300 transition-colors">Neúspešné</button>
           </div>
         </div>
         <div id="detail-panel"
@@ -708,7 +707,7 @@
             <span id="t-danger-level" class="text-on-surface-variant text-[10px] font-bold uppercase tracking-wider block mb-1">Danger
               Level</span>
             <div class="flex items-baseline gap-1.5"><span
-                class="text-2xl font-black text-error tracking-tight">HIGH</span></div>
+                class="text-2xl font-black text-error tracking-tight">VYSOKÉ</span></div>
           </div>
         </div>
       </header>
@@ -737,7 +736,7 @@
               </div>
               <div class="flex items-center gap-2 p-2 bg-surface-container rounded-lg">
                 <span class="material-symbols-outlined text-primary">route</span>
-                <span id="t-helipad-a" class="text-xs font-medium">Helipad A → Incident</span>
+                <span id="t-helipad-a" class="text-xs font-medium">Heliport A → miesto zásahu</span>
               </div>
               <div class="flex items-center gap-2 p-2 bg-surface-container rounded-lg">
                 <span class="material-symbols-outlined text-primary">route</span>
@@ -750,7 +749,7 @@
             <div class="space-y-2">
               <div class="flex items-center justify-between p-2 bg-error-container/30 rounded-lg">
                 <span id="t-avalanche-risk-zone" class="text-xs font-medium">Avalanche Risk</span>
-                <span id="t-high" class="text-[10px] font-bold text-error">HIGH</span>
+                <span id="t-high" class="text-[10px] font-bold text-error">VYSOKÉ</span>
               </div>
               <div class="flex items-center justify-between p-2 bg-yellow-100/30 rounded-lg">
                 <span id="t-crevasse-zone" class="text-xs font-medium">Crevasse Zone</span>
@@ -966,7 +965,7 @@
       <div class="flex-1 flex flex-col h-full overflow-y-auto">
         <!-- Top Header -->
         <header class="flex justify-between items-center p-6 md:px-10 md:pt-10 md:pb-6 border-b border-outline-variant/20">
-          <h1 class="text-3xl font-black text-on-surface tracking-tight">My Bugs</h1>
+          <h1 class="text-3xl font-black text-on-surface tracking-tight">Nahlásené chyby</h1>
           <button onclick="openBugModal()" class="bg-primary hover:opacity-90 text-white px-6 py-3 rounded-xl text-sm font-bold shadow-md shadow-primary/30 transition-all active:scale-95" id="t-submit-bug">Submit Bug</button>
         </header>
 
@@ -988,8 +987,8 @@
 
           <!-- Bug List Header -->
           <div class="grid grid-cols-12 gap-4 px-4 text-[10px] font-black text-primary uppercase tracking-widest pb-2 border-b border-outline-variant/20 mb-4">
-            <div class="col-span-6 md:col-span-5">Bug</div>
-            <div class="col-span-3 md:col-span-2 text-center md:text-left">Status</div>
+            <div class="col-span-6 md:col-span-5">Chyba</div>
+            <div class="col-span-3 md:col-span-2 text-center md:text-left">Stav</div>
             <div class="hidden md:block md:col-span-2">Created</div>
             <div class="hidden md:block md:col-span-2">Due</div>
             <div class="col-span-3 md:col-span-1 text-right md:text-center">Reporter</div>
@@ -1034,7 +1033,7 @@
       <div class="flex-1 flex flex-col h-full overflow-y-auto">
         <!-- Top Header -->
         <header class="flex justify-between items-center p-6 md:px-10 md:pt-10 md:pb-6 border-b border-outline-variant/20">
-          <h1 class="text-3xl font-black text-on-surface tracking-tight">User Feedback</h1>
+          <h1 class="text-3xl font-black text-on-surface tracking-tight">Spätná väzba používateľov</h1>
         </header>
 
         <div class="p-6 md:px-10 flex-1 space-y-8">
@@ -1055,8 +1054,8 @@
 
           <!-- Feedback List Header -->
           <div class="grid grid-cols-12 gap-4 px-4 text-[10px] font-black text-primary uppercase tracking-widest pb-2 border-b border-outline-variant/20 mb-4">
-            <div class="col-span-6 md:col-span-5">Feedback</div>
-            <div class="col-span-3 md:col-span-2 text-center md:text-left">Status</div>
+            <div class="col-span-6 md:col-span-5">Spätná väzba</div>
+            <div class="col-span-3 md:col-span-2 text-center md:text-left">Stav</div>
             <div class="hidden md:block md:col-span-2">Created</div>
             <div class="hidden md:block md:col-span-2">Kategória</div>
             <div class="col-span-3 md:col-span-1 text-right md:text-center">Užívateľ</div>
@@ -1163,7 +1162,7 @@
       class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-400 px-4 py-1" href="#"
       onclick="switchView('history'); return false;"><span
         class="material-symbols-outlined">medical_services</span><span
-        class="text-[9px] font-bold uppercase tracking-widest">Alerts</span></a>
+        class="text-[9px] font-bold uppercase tracking-widest">Prípady</span></a>
     <a id="nav-mob-results"
       class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-400 px-4 py-1" href="#"
       onclick="switchView('results'); return false;"><span class="material-symbols-outlined">fact_check</span><span
@@ -1175,15 +1174,15 @@
     <a id="nav-mob-comms" class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-400 px-4 py-1"
       href="#" onclick="switchView('dispatch'); return false;"><span
         class="material-symbols-outlined">history</span><span
-        class="text-[9px] font-bold uppercase tracking-widest">Comms</span></a>
+        class="text-[9px] font-bold uppercase tracking-widest">Hovory</span></a>
     <a id="nav-mob-metrics"
       class="hidden flex flex-col items-center justify-center text-slate-400 dark:text-slate-400 px-4 py-1" href="#"
       onclick="switchView('admin-metrics'); return false;"><span class="material-symbols-outlined">bar_chart</span><span
-        class="text-[9px] font-bold uppercase tracking-widest">Metrics</span></a>
+        class="text-[9px] font-bold uppercase tracking-widest">Metriky</span></a>
     <a id="nav-mob-bugs"
       class="hidden flex flex-col items-center justify-center text-slate-400 dark:text-slate-400 px-4 py-1" href="#"
       onclick="switchView('admin-bugs'); return false;"><span class="material-symbols-outlined">bug_report</span><span
-        class="text-[9px] font-bold uppercase tracking-widest">Bugs</span></a>
+        class="text-[9px] font-bold uppercase tracking-widest">Chyby</span></a>
   </nav>
 
   <script>
@@ -1219,9 +1218,9 @@
       }).setView(sharedCenter || [currentLat, currentLng], sharedZoom || 12);
 
       const baseMaps = {
-        "Topography": topoLayer,
-        "Satellite": satelliteLayer,
-        "Streets": streetLayer,
+        "Topografická": topoLayer,
+        "Satelitná": satelliteLayer,
+        "Uličná": streetLayer,
         "OpenStreetMap": osmLayer,
         "OpenTopoMap": openTopoLayer,
         "NatGeo World": natGeoLayer
@@ -1390,6 +1389,16 @@
       return activeAgent || pickAgentForCall();
     }
 
+    // ─── Slovenské popisy pre rozhranie ───
+    const WEATHER_SK = { 'Clear': 'Jasno', 'Sunny': 'Slnečno', 'Partly Cloudy': 'Polooblačno', 'Cloudy': 'Oblačno', 'Overcast': 'Zamračené',
+      'Light Rain': 'Slabý dážď', 'Heavy Rain': 'Silný dážď', 'Snow': 'Sneženie', 'Fog': 'Hmla', 'Wind': 'Veterno', 'Storm': 'Búrka',
+      'Cold': 'Chladno', 'Fog/Rain': 'Hmla a dážď', 'Cold/Humid': 'Chladno a vlhko' };
+    function weatherSk(w) { return WEATHER_SK[w] || w || ''; }
+    const RISK_SK = { 'CRITICAL': 'kritické', 'HIGH': 'vysoké', 'MEDIUM': 'stredné', 'LOW': 'nízke' };
+    function riskSk(r) { return RISK_SK[String(r || '').toUpperCase()] || r || ''; }
+    function agentDisplayName(a) { return a ? (a.name || '').slice(0, 2) + ' – ' + (a.scenario || a.name || '') : 'Volajúci'; }
+    function formatCallCount(n) { return n + ' ' + (n === 1 ? 'hovor' : n >= 2 && n <= 4 ? 'hovory' : 'hovorov'); }
+
     function getCurrentAgentId() {
       const agent = getCurrentAgent();
       return agent.id;
@@ -1402,11 +1411,11 @@
       currentWeather = agent.weather;
       currentTemp = agent.temp;
       const weatherEl = document.getElementById('current-weather');
-      if (weatherEl) weatherEl.textContent = currentWeather;
+      if (weatherEl) weatherEl.textContent = weatherSk(currentWeather);
       const tempEl = document.getElementById('current-temp');
       if (tempEl) tempEl.textContent = currentTemp + '°C';
       const weatherTextEl = document.getElementById('weather-text');
-      if (weatherTextEl) weatherTextEl.textContent = currentWeather + ' ' + currentTemp + '°C';
+      if (weatherTextEl) weatherTextEl.textContent = weatherSk(currentWeather) + ' ' + currentTemp + '°C';
       updateWeatherIcon(currentWeather);
 
       // Poloha volajúceho: AML sa zameria sama, inak ju dispečer musí vyhľadať
@@ -1541,11 +1550,11 @@
       currentWeather = weatherConditions[Math.floor(Math.random() * weatherConditions.length)];
       currentTemp = Math.floor(Math.random() * 25) - 5;
       const w = document.getElementById('current-weather');
-      if (w) w.textContent = currentWeather;
+      if (w) w.textContent = weatherSk(currentWeather);
       const t = document.getElementById('current-temp');
       if (t) t.textContent = currentTemp + '°C';
       const wt = document.getElementById('weather-text');
-      if (wt) wt.textContent = currentWeather + ' ' + currentTemp + '°C';
+      if (wt) wt.textContent = weatherSk(currentWeather) + ' ' + currentTemp + '°C';
       updateWeatherIcon(currentWeather);
     }
 
@@ -1560,11 +1569,11 @@
       currentWeather = weatherConditions[Math.floor(Math.random() * weatherConditions.length)];
       currentTemp = Math.floor(Math.random() * 25) - 5;
       const weatherEl = document.getElementById('current-weather');
-      if (weatherEl) weatherEl.textContent = currentWeather;
+      if (weatherEl) weatherEl.textContent = weatherSk(currentWeather);
       const tempEl = document.getElementById('current-temp');
       if (tempEl) tempEl.textContent = currentTemp + '°C';
       const weatherTextEl = document.getElementById('weather-text');
-      if (weatherTextEl) weatherTextEl.textContent = currentWeather + ' ' + currentTemp + '°C';
+      if (weatherTextEl) weatherTextEl.textContent = weatherSk(currentWeather) + ' ' + currentTemp + '°C';
       updateWeatherIcon(currentWeather);
       const checkboxes = document.querySelectorAll('input[type="checkbox"]');
       if (checkboxes[1]) checkboxes[1].checked = true;
@@ -2196,11 +2205,11 @@
             let html = `
               <div onclick="setBugFilter('New')" class="cursor-pointer ${isNewActive ? 'bg-primary text-white shadow-primary/30 border-primary/20 scale-105' : 'bg-primary/10 text-primary hover:bg-primary/20 border-primary/5'} w-[110px] h-[90px] rounded-2xl flex flex-col justify-center items-center p-3 shadow-sm border transition-all duration-200">
                 <span class="text-3xl font-black mb-1">${countNew}</span>
-                <span class="text-[9px] font-bold uppercase tracking-wide">New Bugs</span>
+                <span class="text-[9px] font-bold uppercase tracking-wide">Nové chyby</span>
               </div>
               <div onclick="setBugFilter('Open')" class="cursor-pointer ${isOpenActive ? 'bg-primary text-white shadow-primary/30 border-primary/20 scale-105' : 'bg-primary/10 text-primary hover:bg-primary/20 border-primary/5'} w-[110px] h-[90px] rounded-2xl flex flex-col justify-center items-center p-3 shadow-sm border transition-all duration-200">
                 <span class="text-3xl font-black mb-1">${countOpen}</span>
-                <span class="text-[9px] font-bold uppercase tracking-wide text-center">Open<br>Bugs</span>
+                <span class="text-[9px] font-bold uppercase tracking-wide text-center">Otvorené<br>chyby</span>
               </div>
               <div onclick="setBugFilter('Overdue')" class="cursor-pointer ${isOverdueActive ? 'bg-primary text-white shadow-primary/30 border-primary/20 scale-105' : 'bg-primary/10 text-primary hover:bg-primary/20 border-primary/5'} w-[110px] h-[90px] rounded-2xl flex flex-col justify-center items-center p-3 shadow-sm border transition-all duration-200">
                 <span class="text-3xl font-black mb-1">${countOverdue}</span>
@@ -2208,11 +2217,11 @@
               </div>
               <div onclick="setBugFilter('DueToday')" class="cursor-pointer ${isTodayActive ? 'bg-primary text-white shadow-primary/30 border-primary/20 scale-105' : 'bg-primary/10 text-primary hover:bg-primary/20 border-primary/5'} w-[110px] h-[90px] rounded-2xl flex flex-col justify-center items-center p-3 shadow-sm border transition-all duration-200">
                 <span class="text-3xl font-black mb-1">${countDueToday}</span>
-                <span class="text-[9px] font-bold uppercase tracking-wide">Due Today</span>
+                <span class="text-[9px] font-bold uppercase tracking-wide">Termín dnes</span>
               </div>
               <div onclick="setBugFilter('ThisWeek')" class="cursor-pointer ${isWeekActive ? 'bg-primary text-white shadow-primary/30 border-primary/20 scale-105' : 'bg-primary/10 text-primary hover:bg-primary/20 border-primary/5'} w-[110px] h-[90px] rounded-2xl flex flex-col justify-center items-center p-3 shadow-sm border transition-all duration-200">
                 <span class="text-3xl font-black mb-1">${countThisWeek}</span>
-                <span class="text-[8px] font-bold uppercase tracking-wide text-center">This Week</span>
+                <span class="text-[8px] font-bold uppercase tracking-wide text-center">Tento týždeň</span>
               </div>
             `;
             
@@ -2556,13 +2565,13 @@
       const printWindow = window.open('', '_blank');
       if (!printWindow) return;
       const s = currentSessionData;
-      if (!s) { alert('No session selected'); return; }
-      const weatherInfo = s.weather ? s.weather + ' ' + s.temperature + 'C' : '—';
+      if (!s) { alert('Nie je vybraný žiadny hovor'); return; }
+      const weatherInfo = s.weather ? weatherSk(s.weather) + ' ' + s.temperature + ' °C' : '—';
       const v = s.verificationItems || {};
       const verified = (checked) => checked ? '✓' : '✗';
       const verifiedColor = (checked) => checked ? '#16a34a' : '#dc2626';
       const translatedIncident = getTranslatedIncidentType(s.incidentType);
-      const html = `<!DOCTYPE html><html><head><meta charset="utf-8"/><title>Dispatch Report - ${translatedIncident}</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"><style>
+      const html = `<!DOCTYPE html><html><head><meta charset="utf-8"/><title>Správa o zásahu – ${translatedIncident}</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"><style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Inter', Arial, sans-serif; padding: 30px; max-width: 900px; margin: 0 auto; background: #f9f9fd; color: #191c1e; }
     .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid #003b72; }
@@ -2597,54 +2606,54 @@
   </style></head><body>
     <div class="header">
       <div>
-        <h1>${translatedIncident} - Dispatch Report</h1>
+        <h1>${translatedIncident} – správa o zásahu</h1>
         <div class="meta">${s.timestamp}</div>
       </div>
     </div>
     <div class="grid">
       <div class="card">
-        <div class="card-title">Adherence to Protocol</div>
+        <div class="card-title">Dodržanie protokolu</div>
         <div class="score-circle"><span>${s.accuracy}%</span></div>
-        <div class="info-row"><span>Status</span><span>${s.status}</span></div>
-        <div class="info-row"><span>Weather</span><span>${weatherInfo}</span></div>
-        <div class="info-row"><span>Score</span><span>${s.accuracy}/100</span></div>
+        <div class="info-row"><span>Stav</span><span>${(s.accuracy || 0) < FAILURE_THRESHOLD ? 'Neúspešný' : 'Úspešný'}</span></div>
+        <div class="info-row"><span>Počasie</span><span>${weatherInfo}</span></div>
+        <div class="info-row"><span>Skóre</span><span>${s.accuracy}/100</span></div>
       </div>
       <div class="card">
-        <div class="card-title">Rescue Verification</div>
-        <div class="verify-item"><span>GPS Coordinates Verified</span><span class="verify-icon" style="color:${verifiedColor(v.gpsVerified)}">${verified(v.gpsVerified)}</span></div>
-        <div class="verify-item"><span>Weather Conditions Noted</span><span class="verify-icon" style="color:${verifiedColor(v.weatherNoted)}">${verified(v.weatherNoted)}</span></div>
-        <div class="verify-item"><span>Life-threatening Injuries</span><span class="verify-icon" style="color:${verifiedColor(v.injuriesChecked)}">${verified(v.injuriesChecked)}</span></div>
-        <div class="verify-item"><span>Avalanche Risk Assessed</span><span class="verify-icon" style="color:${verifiedColor(v.avalancheAssessed)}">${verified(v.avalancheAssessed)}</span></div>
+        <div class="card-title">Overenie zásahu</div>
+        <div class="verify-item"><span>GPS súradnice overené</span><span class="verify-icon" style="color:${verifiedColor(v.gpsVerified)}">${verified(v.gpsVerified)}</span></div>
+        <div class="verify-item"><span>Počasie zaznamenané</span><span class="verify-icon" style="color:${verifiedColor(v.weatherNoted)}">${verified(v.weatherNoted)}</span></div>
+        <div class="verify-item"><span>Život ohrozujúce zranenia</span><span class="verify-icon" style="color:${verifiedColor(v.injuriesChecked)}">${verified(v.injuriesChecked)}</span></div>
+        <div class="verify-item"><span>Lavínové riziko posúdené</span><span class="verify-icon" style="color:${verifiedColor(v.avalancheAssessed)}">${verified(v.avalancheAssessed)}</span></div>
       </div>
       ${s.llmAnalysis ? `
       <div class="card full-width">
-        <div class="section-title">Call Intelligence Summary</div>
+        <div class="section-title">Zhrnutie hovoru</div>
         ${s.completedItems && s.completedItems.length ? `
         <div class="completed">
-          <div class="completed-title">Completed</div>
+          <div class="completed-title">Splnené</div>
           ${s.completedItems.map(item => `<div class="completed-item">- ${item}</div>`).join('')}
         </div>` : ''}
         ${s.missingItems && s.missingItems.length ? `
         <div class="not-addressed">
-          <div class="not-addressed-title">Not Addressed</div>
+          <div class="not-addressed-title">Nesplnené</div>
           ${s.missingItems.map(item => `<div class="not-addressed-item">- ${item}</div>`).join('')}
         </div>` : ''}
         <p style="font-size:11px;font-style:italic;color:#424751;margin-top:12px">${s.llmAnalysis}</p>
       </div>` : ''}
       ${s.situationIntel ? `
       <div class="card full-width">
-        <div class="section-title">Dispatcher Notes</div>
+        <div class="section-title">Poznámky dispečera</div>
         <div class="notes">${s.situationIntel}</div>
       </div>` : ''}
       <div class="card full-width">
-        <div class="section-title">Call Transcript</div>
+        <div class="section-title">Prepis hovoru</div>
         <div class="transcript">
-          ${s.transcript && s.transcript.length ? s.transcript.map(t => `<div class="msg"><div class="role">${t.role}</div><div class="text">${t.text}</div></div>`).join('') : '<p>No transcript available.</p>'}
+          ${s.transcript && s.transcript.length ? s.transcript.map(t => `<div class="msg"><div class="role">${t.role}</div><div class="text">${t.text}</div></div>`).join('') : '<p>Prepis nie je k dispozícii.</p>'}
         </div>
       </div>
     </div>
     <div class="footer">
-      <p>Generated by ADREMA - Alpine Rescue Dispatch System</p>
+      <p>Vygenerované v ADREMA - Systém záchranného dispečingu</p>
     </div>
   </body></html>`;
       printWindow.document.write(html);
@@ -2676,9 +2685,9 @@
       }).setView([SLOVAKIA_CENTER.lat, SLOVAKIA_CENTER.lng], 7);
 
       const baseMaps = {
-        "Topography": topoLayer,
-        "Satellite": satelliteLayer,
-        "Streets": streetLayer,
+        "Topografická": topoLayer,
+        "Satelitná": satelliteLayer,
+        "Uličná": streetLayer,
         "OpenStreetMap": osmLayer,
         "OpenTopoMap": openTopoLayer,
         "NatGeo World": natGeoLayer
@@ -3111,18 +3120,18 @@
 
     function openSettings() {
       const isDark = document.documentElement.classList.contains('dark');
-      const selectedName = AGENTS[selectedAgentIndex]?.name || 'Select agent';
+      const selectedName = AGENTS[selectedAgentIndex] ? agentDisplayName(AGENTS[selectedAgentIndex]) : 'Vyberte scenár';
       const randomStatus = useRandomAgent ? ' (Random)' : '';
 
       let agentOptions = AGENTS.map((a, i) =>
-        `<option value="${i}" ${i === selectedAgentIndex && !useRandomAgent ? 'selected' : ''}>${a.name}</option>`
+        `<option value="${i}" ${i === selectedAgentIndex && !useRandomAgent ? 'selected' : ''}>${agentDisplayName(a)}</option>`
       ).join('');
 
       let html = `
     <div class="fixed inset-0 bg-slate-50 dark:bg-slate-900 z-[9999] overflow-y-auto settings-overlay flex flex-col transition-all duration-300">
       <!-- Header -->
       <div class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 px-6 py-4 flex items-center justify-between sticky top-0 z-10 shadow-sm">
-        <h2 class="text-2xl font-black text-slate-800 dark:text-white tracking-tight">Settings</h2>
+        <h2 class="text-2xl font-black text-slate-800 dark:text-white tracking-tight">Nastavenia</h2>
         <button onclick="this.closest('.settings-overlay').remove()" class="bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300 p-2 rounded-full transition-colors flex items-center justify-center">
           <span class="material-symbols-outlined text-[20px]">close</span>
         </button>
@@ -3139,8 +3148,8 @@
             <!-- Language -->
             <div class="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 dark:border-slate-700/50">
               <div>
-                <div class="font-bold text-slate-700 dark:text-slate-200 text-sm">Language</div>
-                <div class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Choose your preferred language</div>
+                <div class="font-bold text-slate-700 dark:text-slate-200 text-sm">Jazyk</div>
+                <div class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Jazyk rozhrania aplikácie</div>
               </div>
               <div class="flex gap-2 bg-slate-100 dark:bg-slate-900 p-1 rounded-xl">
                 <button onclick="setLanguage('en')" class="px-4 py-2 rounded-lg font-bold text-xs transition-all ${localStorage.getItem('appLang') === 'en' || !localStorage.getItem('appLang') ? 'bg-white dark:bg-slate-700 text-primary shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700'}">English</button>
@@ -3151,8 +3160,8 @@
             <!-- Appearance -->
             <div class="p-4 sm:p-5 flex items-center justify-between border-b border-slate-100 dark:border-slate-700/50">
               <div>
-                <div class="font-bold text-slate-700 dark:text-slate-200 text-sm">Dark Mode</div>
-                <div class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Adjust the appearance of the app</div>
+                <div class="font-bold text-slate-700 dark:text-slate-200 text-sm">Tmavý režim</div>
+                <div class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Vzhľad aplikácie</div>
               </div>
               <button onclick="toggleDarkMode()" class="w-12 h-6 rounded-full transition-colors relative flex items-center cursor-pointer ${isDark ? 'bg-primary' : 'bg-slate-300 dark:bg-slate-600'}">
                 <div class="absolute left-1 w-4 h-4 bg-white rounded-full shadow-sm transition-transform duration-300 ${isDark ? 'translate-x-6' : 'translate-x-0'}"></div>
@@ -3162,8 +3171,8 @@
             <!-- Welcome Animation -->
             <div class="p-4 sm:p-5 flex items-center justify-between">
               <div>
-                <div class="font-bold text-slate-700 dark:text-slate-200 text-sm">Welcome Screen</div>
-                <div class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Show welcome animation on startup</div>
+                <div class="font-bold text-slate-700 dark:text-slate-200 text-sm">Uvítacia obrazovka</div>
+                <div class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Zobraziť uvítaciu animáciu pri spustení</div>
               </div>
               <button onclick="toggleWelcomeAnimation()" class="w-12 h-6 rounded-full transition-colors relative flex items-center cursor-pointer ${localStorage.getItem(getUserKey('welcome_animation')) !== 'false' ? 'bg-primary' : 'bg-slate-300 dark:bg-slate-600'}">
                 <div class="absolute left-1 w-4 h-4 bg-white rounded-full shadow-sm transition-transform duration-300 ${localStorage.getItem(getUserKey('welcome_animation')) !== 'false' ? 'translate-x-6' : 'translate-x-0'}"></div>
@@ -3175,11 +3184,11 @@
 
         <!-- Section: AI Agent -->
         <div class="space-y-3">
-          <h3 class="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-2">AI Agent Configuration</h3>
+          <h3 class="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-2">Nastavenie AI volajúceho</h3>
           <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm p-4 sm:p-5">
             <div class="">
-              <div class="font-bold text-slate-700 dark:text-slate-200 text-sm">Scenario Selection</div>
-              <div class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 mb-4">Choose which scenario the AI agent will run</div>
+              <div class="font-bold text-slate-700 dark:text-slate-200 text-sm">Výber scenára</div>
+              <div class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 mb-4">Vyberte, ktorý scenár bude AI volajúci hrať</div>
               <div class="flex flex-col sm:flex-row gap-3">
                 <div class="relative flex-1">
                   <select id="agent-select" class="w-full py-3 pl-4 pr-10 rounded-xl font-bold text-sm bg-slate-100 dark:bg-slate-900/50 text-slate-700 dark:text-slate-200 border-none focus:ring-2 focus:ring-primary/20 appearance-none outline-none" onchange="selectAgent(this.value)">
@@ -3188,12 +3197,12 @@
                   <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">expand_more</span>
                 </div>
                 <button onclick="toggleRandomAgent()" class="py-3 px-6 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all ${useRandomAgent ? 'bg-green-500 text-white shadow-md shadow-green-500/20' : 'bg-slate-100 dark:bg-slate-900/50 text-slate-600 dark:text-slate-300 hover:bg-slate-200'}">
-                  <span class="material-symbols-outlined text-[18px]">casino</span> Random
+                  <span class="material-symbols-outlined text-[18px]">casino</span> Náhodne
                 </button>
               </div>
               <div class="text-xs text-slate-400 mt-4 flex items-center gap-1.5 bg-slate-50 dark:bg-slate-900/30 p-2.5 rounded-lg border border-slate-100 dark:border-slate-800">
                 <span class="material-symbols-outlined text-[14px] text-primary">info</span>
-                Currently active: <span id="selected-agent-name" class="font-bold text-primary ml-1">${useRandomAgent ? 'Random Mode' : selectedName}</span>
+                Aktívne: <span id="selected-agent-name" class="font-bold text-primary ml-1">${useRandomAgent ? 'Náhodný výber bez opakovania' : selectedName}</span>
               </div>
             </div>
           </div>
@@ -3201,7 +3210,7 @@
 
         <!-- Section: Support & Account -->
         <div class="space-y-3">
-          <h3 class="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-2">Support & Account</h3>
+          <h3 class="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-2">Podpora a účet</h3>
           <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm">
             <button onclick="restartTutorial()" class="w-full p-4 sm:p-5 flex items-center justify-between border-b border-slate-100 dark:border-slate-700/50 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors text-left group">
               <div class="flex items-center gap-4">
@@ -3209,8 +3218,8 @@
                   <span class="material-symbols-outlined text-[20px]">school</span>
                 </div>
                 <div>
-                  <div class="font-bold text-slate-700 dark:text-slate-200 text-sm">Replay Tutorial</div>
-                  <div class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Watch the onboarding guide again</div>
+                  <div class="font-bold text-slate-700 dark:text-slate-200 text-sm">Znova prejsť úvod</div>
+                  <div class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Zobraziť úvodný návod ešte raz</div>
                 </div>
               </div>
               <span class="material-symbols-outlined text-slate-300 dark:text-slate-600 group-hover:text-primary transition-colors">chevron_right</span>
@@ -3233,8 +3242,8 @@
                   <span class="material-symbols-outlined text-[20px]">logout</span>
                 </div>
                 <div>
-                  <div class="font-bold text-red-600 dark:text-red-400 text-sm">Log Out</div>
-                  <div class="text-xs text-red-400/70 mt-0.5">Sign out of your current account</div>
+                  <div class="font-bold text-red-600 dark:text-red-400 text-sm">Odhlásiť sa</div>
+                  <div class="text-xs text-red-400/70 mt-0.5">Odhlásiť sa z aktuálneho účtu</div>
                 </div>
               </div>
               <span class="material-symbols-outlined text-red-300 dark:text-red-800 group-hover:text-red-500 transition-colors">chevron_right</span>
@@ -3380,7 +3389,7 @@
         <span class="material-symbols-outlined text-4xl text-primary" style="font-variation-settings: 'FILL' 1;">medical_services</span>
       </div>
       <h2 class="text-xl font-bold text-primary mb-2">ADREMA</h2>
-      <p class="text-xs text-on-surface-variant mb-6">Alpine Rescue Dispatch System</p>
+      <p class="text-xs text-on-surface-variant mb-6">Systém záchranného dispečingu</p>
       <button id="start-call-btn" class="px-8 py-3 bg-primary text-white font-bold rounded-xl shadow-lg hover:shadow-primary/30 hover:opacity-90 transition-all active:scale-95 flex items-center gap-2">
         <span class="material-symbols-outlined">call</span>
         Začať tiesňový hovor
@@ -3802,7 +3811,7 @@ ${audioTags
       vapiConnected = false;
       isMuted = false;
 
-      const currentAgentName = agent?.name || 'Agent';
+      const currentAgentName = agentDisplayName(agent);
       const voiceModel = getEnv('REACT_APP_ELEVENLABS_MODEL') || ELEVENLABS_VOICE_MODEL;
       activeLlmModel = pickLlmModel();
       lastEndedReason = null;
@@ -4383,7 +4392,7 @@ ${audioTags
         terrainMapSub: 'Náhľad mapy',
         rescueRoutes: 'Záchranné trasy',
         baseCamp: 'Základný tábor → Vrchol',
-        helipadA: 'Helipad A → Incident',
+        helipadA: 'Heliport A → miesto zásahu',
         emergencyExit: 'Núdzový východ',
         hazardZones: 'Nebezpečné zóny',
         avalancheRiskZone: 'Lavínové nebezpečenstvo',
@@ -4732,15 +4741,76 @@ ${audioTags
       return m > 0 ? `${m} min ${s} s` : `${s} s`;
     }
 
-    // Hlavné lokálne vyhodnotenie – vychádza z pôvodných kategórií a váh computeProtocolRating
+    // Ako sa dá informáciu zistiť aj bez konkrétnej otázky:
+    // ans = čo musí povedať volajúci, general = ktorá všeobecná otázka sa počíta
+    const ITEM_EVIDENCE = {
+      what: { ans: /(spadol|spadla|porezal|dusí|nehod|narazil|bodla|zrútil|nereaguje|bezvedom|krváca|nedýcha|stratil|stratila|visí|prehltl)/i, general: 'situation' },
+      time: { ans: /(pred (chvíľou|chvilkou|chvíľkou|minút|minútou|hodin|hodinou|pár)|práve teraz|práve sa to stalo|pred \S+ minút|asi \S+ minút|od rána|pred polhodinou)/i, general: 'situation' },
+      mechanism: { ans: /(spadol|spadla|z výšky|z rebríka|zo svahu|porezal|pílou|narazil|do stromu|bodla|prehltol|prehltla|zošmykol|pošmykol)/i, general: 'situation' },
+      conscious: { ans: /(nereaguje|reaguje|bezvedom|pri vedomí|neodpovedá|odpovedá|nevníma|vníma|otvoril oči|otvorila oči|nehýbe sa|nebudí|zobudil)/i, general: 'condition' },
+      breathing: { ans: /(dýcha|nedýcha|chrčí|lapá|dusí|nadýchnuť|nádych|nevládze dýchať)/i, general: 'condition' },
+      bleeding: { ans: /(krv|krvác)/i, general: 'condition' },
+      injuries: { ans: /(bolí|zlomen|zlomil|zranen|rana|ranu|porezal|popálil|udrel|opuch|vykrúten|koleno|stehn|nohu|noha|ruku|ruka|rameno|hlavu|hlava|chrbát|chrbtic|hruď|brucho|tvár|odrel|krváca z)/i, general: 'condition' },
+      mobility: { ans: /(nehýbe|hýbe|necíti|nemôže (vstať|chodiť|sa postaviť|sa pohnúť)|tŕpnu|ochrnut)/i, general: 'condition' },
+      safety: { ans: /(dym|horí|tečie|benzín|plyn|medveď|padajú|nebezpeč|bezpečn|premávk|auto ide|kamene padajú)/i, general: 'situation' },
+      persons: { ans: /(som sám|som sama|sme sami|dvaja|traja|len (on|ona|my)|nikto iný|ešte (jeden|niekto)|je tu (ešte|aj))/i, general: 'situation' },
+      environment: { ans: /(hmla|zima|prší|leje|sneh|tma|stmieva|vietor|fúka|voda|potok|horúco|teplo|mrzne)/i, general: 'situation' },
+      age: { ans: /(\d+\s*(rok|roč)|rokov|ročn|dieťa|malá|malý|starý|stará|dôchodca)/i, general: 'condition' },
+      history: { ans: /(alerg|lieky|liek |chorý|chorá|cukrovk|srdc|astm|epilep|vysoký tlak)/i, general: 'condition' },
+      phone: { ans: /(0\d{2,3}[\s\d]{6,}|\+421|číslo (je|mám))/i },
+      vehicles: { ans: /(auto|áut|vozid|kamión|motork)/i, general: 'situation' },
+      trapped: { ans: /(zakliesn|uviaz|nevie sa dostať|nemôže sa dostať|zaseknut)/i, general: 'situation' },
+      hazards: { ans: /(dym|horí|tečie|benzín|smrdí|iskr)/i, general: 'situation' },
+      symptoms: { ans: /(bolí (ma )?hlava|točí sa mi|je mi zle|nevoľn|zvracia)/i, general: 'condition' },
+      source: { ans: /(karm|kotol|plyn|ohrievač|kachl)/i, general: 'situation' },
+      cough: { ans: /(kašle|kašeľ|nekašle|dýcha|nedýcha)/i, general: 'condition' }
+    };
+    // Všeobecné otázky, ktoré otvárajú tému (volajúci potom informáciu povie sám)
+    const GENERAL_QUESTIONS = {
+      condition: /(ako (je )?na tom|v akom (je )?stave|aký (má |je )?(jeho |jej )?stav|zdravotn|kondíci|čo (mu|jej) je|ako sa (cíti|má)|je (v poriadku|ok)|čo (vidíte|robí) (na ňom|na nej|teraz)|opíšte (mi )?(jeho|jej|ho|ju))/i,
+      situation: /(čo sa (stalo|deje)|povedzte mi (viac|všetko|čo)|opíšte|popíšte|čo vidíte|aká je situácia|ako to tam vyzerá)/i
+    };
+    const ITEM_STATUS = {
+      asked: { credit: 1, label: 'riešené priamo (otázkou alebo pokynom)' },
+      general: { credit: 1, label: 'zistené všeobecnou otázkou' },
+      volunteered: { credit: 0.75, label: 'povedal volajúci sám – odporúčame overiť otázkou' },
+      generalOnly: { credit: 0.5, label: 'len všeobecná otázka – konkrétna odpoveď neodznela' },
+      missing: { credit: 0, label: 'nezistené' }
+    };
+
+    // Hlavné lokálne vyhodnotenie – vychádza z pôvodných kategórií a váh computeProtocolRating.
+    // Bod sa počíta podľa toho, či dispečer informáciu ZISTIL (priamo, všeobecnou otázkou alebo od volajúceho),
+    // nielen podľa presného znenia otázky. Výsledok = protokol (vážený priemer) − penalizácie za kritické chyby.
     function evaluateProtocol(incidentType, transcript, agent, callDuration, location) {
       const msgs = (transcript || []).filter(m => !isSystemRole(m.role));
       const operatorMsgs = msgs.filter(m => isOperatorRole(m.role));
       const callerMsgs = msgs.filter(m => !isOperatorRole(m.role));
 
-      const findFirst = (re) => {
-        const m = operatorMsgs.find(m => re.test(m.text));
-        return m ? { found: true, t: typeof m.t === 'number' ? m.t : null } : { found: false, t: null };
+      // Poloha: volajúci spomenie miesto zo scenára alebo typický opis polohy
+      const locationWords = String(agent?.location || '').split(/[\s,.;:()–\-]+/).filter(w => w.length > 3).map(w => w.toLowerCase());
+      const locationAns = (text) => {
+        const t = text.toLowerCase();
+        return locationWords.some(w => t.includes(w)) || /(ulic|číslo domu|obec|sme (na|pri|v|pod|nad)|som (na|pri|v|pod|nad)|pri (ceste|lese|kríži|potoku)|značk|chodník|chata|parkovisk|rázcest)/i.test(text);
+      };
+
+      const evaluateItem = (item) => {
+        const asked = operatorMsgs.find(m => item.re.test(m.text));
+        if (asked) return { status: 'asked', t: typeof asked.t === 'number' ? asked.t : null };
+        const ev = item.id === 'location' ? { test: locationAns, general: 'situation' } : (ITEM_EVIDENCE[item.id] ? { test: (x) => ITEM_EVIDENCE[item.id].ans.test(x), general: ITEM_EVIDENCE[item.id].general } : null);
+        if (!ev) return { status: 'missing', t: null };
+        const generalRe = ev.general ? GENERAL_QUESTIONS[ev.general] : null;
+        // všeobecná otázka a po nej odpoveď volajúceho s touto informáciou
+        if (generalRe) {
+          for (let i = 0; i < msgs.length; i++) {
+            if (!isOperatorRole(msgs[i].role) || !generalRe.test(msgs[i].text)) continue;
+            const answer = msgs.slice(i + 1).find(m => !isOperatorRole(m.role) && ev.test(m.text));
+            if (answer) return { status: 'general', t: typeof msgs[i].t === 'number' ? msgs[i].t : null };
+          }
+        }
+        const volunteered = callerMsgs.find(m => ev.test(m.text));
+        if (volunteered) return { status: 'volunteered', t: typeof volunteered.t === 'number' ? volunteered.t : null };
+        if (generalRe && operatorMsgs.some(m => generalRe.test(m.text))) return { status: 'generalOnly', t: null };
+        return { status: 'missing', t: null };
       };
 
       const categories = { ...PROTOCOL_CHECKS };
@@ -4768,34 +4838,36 @@ ${audioTags
       }
 
       const results = {};
-      let weighted = 0;
+      let protocolExact = 0;
       Object.entries(categories).forEach(([key, cat]) => {
-        const items = cat.items.map(item => ({ ...item, ...findFirst(item.re) }));
-        const done = items.filter(i => i.found).length;
-        const score = items.length ? Math.round((done / items.length) * 100) : 100;
-        results[key] = { label: cat.label, score, items };
-        weighted += score * (categoryWeights[key] || 0);
+        const items = cat.items.map(item => {
+          const r = evaluateItem(item);
+          const st = ITEM_STATUS[r.status];
+          return { ...item, category: cat.label, status: r.status, statusLabel: st.label, credit: st.credit, found: st.credit >= 0.75, t: r.t };
+        });
+        const ratio = items.length ? items.reduce((s, i) => s + i.credit, 0) / items.length : 1;
+        results[key] = { label: cat.label, score: Math.round(ratio * 100), items, weight: categoryWeights[key] || 0 };
+        protocolExact += ratio * 100 * (categoryWeights[key] || 0);
       });
-
-      let score = Math.round(weighted);
-
-      // Kritické chyby – stiahnu skóre bez ohľadu na ostatné body
-      const criticalErrors = [];
+      const protocolScore = Math.round(protocolExact);
       const allItems = Object.values(results).flatMap(c => c.items);
+
+      // Kritické chyby – každá znamená penalizáciu 8 bodov (s uvedeným dôvodom)
+      const PENALTY = 8;
+      const penalties = [];
       const isCriticalScenario = (agent?.risk || '').toUpperCase() === 'CRITICAL';
-      allItems.filter(i => i.critical && !i.found).forEach(i => {
+      allItems.filter(i => i.critical && i.credit < 0.75).forEach(i => {
         if (i.id === 'instructions' && !isCriticalScenario) return;
-        criticalErrors.push(`${i.label} – nezistené / nevykonané`);
+        penalties.push({ label: `${i.label} – ${i.status === 'generalOnly' ? 'len všeobecná otázka, konkrétne nezistené' : 'nezistené / nevykonané'}`, points: PENALTY });
       });
-      if (operatorMsgs.length === 0) criticalErrors.push('Dispečer počas hovoru nepovedal nič, čo by sa zachytilo v prepise');
-      if (callDuration > 0 && callDuration < 45) criticalErrors.push(`Hovor bol príliš krátky (${formatSeconds(callDuration)}) na kompletný príjem tiesňového volania`);
+      if (callDuration > 0 && callDuration < 45) penalties.push({ label: `Hovor bol príliš krátky (${formatSeconds(callDuration)}) na kompletný príjem tiesňového volania`, points: PENALTY });
 
       // Lokalizácia na mape (AML / BTS / ručné vyhľadanie)
       const locMistakes = [], locStrengths = [], locTips = [];
       if (location) {
         const pinErr = location.pinErrorMeters;
         if (!location.pin && location.source !== 'aml') {
-          criticalErrors.push('Poloha zásahu nebola určená na mape (automatická poloha AML nebola k dispozícii) – posádka by nevedela, kam ísť');
+          penalties.push({ label: 'Poloha zásahu nebola určená na mape (automatická poloha AML nebola k dispozícii) – posádka by nevedela, kam ísť', points: PENALTY });
           locTips.push('Keď nepríde AML, hneď vyhľadaj adresu alebo orientačný bod na mape a polohu potvrď – nespoliehaj sa len na slovný opis.');
         } else if (!location.pin && location.source === 'aml') {
           locTips.push('Polohu z AML vždy over s volajúcim (adresa, poschodie, orientačné body) a potvrď ju na mape.');
@@ -4807,10 +4879,13 @@ ${audioTags
           if (pinErr > 300) locTips.push('Over polohu viacerými údajmi (obec, ulica, značka trasy, orientačný bod) a porovnaj ju s mapou ešte počas hovoru.');
         }
       }
-      score = Math.max(0, score - criticalErrors.length * 8);
-      if (operatorMsgs.length === 0) score = 0;
+      if (operatorMsgs.length === 0) penalties.unshift({ label: 'Dispečer počas hovoru nepovedal nič, čo by sa zachytilo v prepise', points: protocolScore });
 
-      // Časové metriky (z časových značiek prepisu)
+      const penaltyTotal = penalties.reduce((s, p) => s + p.points, 0);
+      const score = operatorMsgs.length === 0 ? 0 : Math.max(0, Math.min(100, protocolScore - penaltyTotal));
+      const criticalErrors = penalties.map(p => p.label);
+
+      // Časové metriky (z časových značiek prepisu) – čas, kedy bola informácia zistená
       const loc = allItems.find(i => i.id === 'location');
       const disp = allItems.find(i => i.id === 'dispatch');
       const instr = allItems.find(i => i.id === 'instructions');
@@ -4823,8 +4898,8 @@ ${audioTags
         duration: callDuration || 0,
         operatorTurns: operatorMsgs.length,
         callerTurns: callerMsgs.length,
-        questions: operatorMsgs.filter(m => /\?|^(kde|kedy|čo|ako|koľko|je|má|dýcha|reaguje)\b/i.test(m.text.trim())).length,
-        timeToLocation: loc?.t ?? null,
+        questions: operatorMsgs.filter(m => /\?|^(kde|kedy|čo|ako|koľko|je|má|dýcha|reaguje)\s/i.test(m.text.trim())).length,
+        timeToLocation: loc && loc.status !== 'missing' && loc.status !== 'generalOnly' ? loc.t : null,
         timeToDispatch: disp?.t ?? null,
         timeToInstructions: instr?.t ?? null
       };
@@ -4833,35 +4908,44 @@ ${audioTags
       const timing = [];
       if (metrics.timeToLocation !== null) {
         timing.push(metrics.timeToLocation <= 30
-          ? `Polohu si zisťoval rýchlo (${formatSeconds(metrics.timeToLocation)}).`
-          : `Na polohu si sa pýtal až po ${formatSeconds(metrics.timeToLocation)} – cieľ je do 30 s.`);
+          ? `Polohu ste zisťovali rýchlo (${formatSeconds(metrics.timeToLocation)}).`
+          : `Poloha bola zistená až po ${formatSeconds(metrics.timeToLocation)} – cieľ je do 30 s.`);
       }
       if (metrics.timeToDispatch !== null && metrics.timeToDispatch > 90) {
-        timing.push(`Vyslanie pomoci si potvrdil až po ${formatSeconds(metrics.timeToDispatch)} – cieľ je do 90 s.`);
+        timing.push(`Vyslanie pomoci ste potvrdili až po ${formatSeconds(metrics.timeToDispatch)} – cieľ je do 90 s.`);
       }
 
       const strengths = [...locStrengths];
       Object.values(results).forEach(c => { if (c.score >= 80) strengths.push(`${c.label}: zvládnuté (${c.score} %)`); });
       if (metrics.timeToLocation !== null && metrics.timeToLocation <= 30) strengths.push('Rýchle zistenie polohy');
+      const generalWins = allItems.filter(i => i.status === 'general');
+      if (generalWins.length >= 2) strengths.push(`Všeobecnými otázkami ste zistili viac informácií naraz (${generalWins.map(i => i.label.toLowerCase()).join(', ')})`);
 
-      const missing = allItems.filter(i => !i.found);
-      const recommendations = [...locTips, ...missing
-        .sort((a, b) => (b.critical ? 1 : 0) - (a.critical ? 1 : 0))
-        .map(i => i.tip)].slice(0, 6);
+      // Odporúčania: najprv chýbajúce kritické, potom ostatné chýbajúce, potom čiastočné
+      const tipFor = (i) => i.status === 'volunteered' ? `${i.label}: volajúci to povedal sám – overte to aj priamou otázkou.`
+        : i.status === 'generalOnly' ? `${i.label}: po všeobecnej otázke doplňte konkrétnu – ${i.tip.charAt(0).toLowerCase()}${i.tip.slice(1)}`
+          : i.tip;
+      const recItems = allItems.filter(i => i.credit < 1)
+        .sort((a, b) => ((b.critical && b.credit < 0.75 ? 1 : 0) - (a.critical && a.credit < 0.75 ? 1 : 0)) || (a.credit - b.credit));
+      const recommendations = [...locTips, ...recItems.map(tipFor)].slice(0, 6);
 
       let summary;
       if (operatorMsgs.length === 0) summary = 'Hovor neobsahuje žiadne vyjadrenia dispečera – nedá sa vyhodnotiť.';
       else if (score >= 85) summary = 'Výborný príjem tiesňového volania. Kľúčové body protokolu boli splnené.';
-      else if (score >= FAILURE_THRESHOLD) summary = 'Hovor zvládnutý, ale niektoré body protokolu chýbali. Pozri odporúčania nižšie.';
-      else summary = 'Protokol nebol dodržaný v dostatočnej miere. Pred ďalším hovorom si prejdi kritické chyby a odporúčania.';
+      else if (score >= FAILURE_THRESHOLD) summary = 'Hovor zvládnutý, ale niektoré body protokolu chýbali alebo boli len čiastočné. Pozrite odporúčania nižšie.';
+      else summary = 'Protokol nebol dodržaný v dostatočnej miere. Pred ďalším hovorom si prejdite kritické chyby a odporúčania.';
 
       return {
+        version: 2,
         source: 'local',
-        score: Math.min(100, Math.max(0, score)),
+        score,
         summary,
-        categories: Object.fromEntries(Object.entries(results).map(([k, c]) => [k, { label: c.label, score: c.score }])),
-        completed: allItems.filter(i => i.found).map(i => i.label),
-        missing: missing.map(i => i.label),
+        breakdown: { protocolScore, penalties, penaltyTotal, final: score },
+        categories: Object.fromEntries(Object.entries(results).map(([k, c]) => [k, { label: c.label, score: c.score, weight: Math.round(c.weight * 100) }])),
+        items: allItems.map(i => ({ id: i.id, label: i.label, category: i.category, status: i.status, statusLabel: i.statusLabel, credit: i.credit, critical: !!i.critical })),
+        completed: allItems.filter(i => i.credit === 1).map(i => i.label),
+        partial: allItems.filter(i => i.credit > 0 && i.credit < 1).map(i => i.label),
+        missing: allItems.filter(i => i.credit === 0).map(i => i.label),
         criticalErrors,
         strengths,
         mistakes: [...locMistakes, ...timing.filter(t => /až po/.test(t))],
@@ -5036,10 +5120,56 @@ Vráť IBA platný JSON (všetky texty po slovensky, oslovuj dispečera v 2. oso
         const color = c.score >= 80 ? 'bg-green-600' : c.score >= 50 ? 'bg-amber-500' : 'bg-error';
         return `
           <div>
-            <div class="flex justify-between text-[10px] mb-1"><span class="text-on-surface-variant font-semibold">${escapeHtml(c.label)}</span><span class="font-bold text-on-surface">${c.score} %</span></div>
+            <div class="flex justify-between text-[10px] mb-1"><span class="text-on-surface-variant font-semibold">${escapeHtml(c.label)}${c.weight ? ` <span class="font-normal opacity-70">(váha ${c.weight} %)</span>` : ''}</span><span class="font-bold text-on-surface">${c.score} %</span></div>
             <div class="h-1.5 rounded-full bg-surface-container-highest overflow-hidden"><div class="h-full ${color} rounded-full" style="width:${c.score}%"></div></div>
           </div>`;
       }).join('');
+
+      // Rozpis: protokol (vážený priemer kategórií) − penalizácie = výsledok
+      const bd = fb.breakdown;
+      const breakdownHtml = bd ? `
+        <div class="mb-4 p-3 rounded-lg bg-surface-container border border-outline-variant/10">
+          <p class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant mb-2">Ako vzniklo skóre</p>
+          <div class="flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] text-on-surface">
+            <span>Protokol <b>${bd.protocolScore} %</b></span>
+            <span class="text-on-surface-variant">−</span>
+            <span>penalizácie <b class="${bd.penaltyTotal ? 'text-error' : ''}">${bd.penaltyTotal} b.</b></span>
+            <span class="text-on-surface-variant">=</span>
+            <span><b>${bd.final}/100</b>${fb.source === 'ai' ? ` <span class="text-on-surface-variant">(automatický protokol; AI skóre vyššie: ${s.accuracy}/100)</span>` : ''}</span>
+          </div>
+          ${bd.penalties && bd.penalties.length ? `<ul class="mt-2 space-y-1">${bd.penalties.map(p => `<li class="text-[11px] text-error flex gap-1.5"><span class="font-bold whitespace-nowrap">−${p.points} b.</span><span>${escapeHtml(p.label)}</span></li>`).join('')}</ul>` : ''}
+        </div>` : '';
+
+      const STATUS_UI = {
+        asked: { icon: 'check_circle', cls: 'text-green-600 dark:text-green-400' },
+        general: { icon: 'check_circle', cls: 'text-green-600 dark:text-green-400' },
+        volunteered: { icon: 'contrast', cls: 'text-amber-600 dark:text-amber-400' },
+        generalOnly: { icon: 'contrast', cls: 'text-amber-600 dark:text-amber-400' },
+        missing: { icon: 'cancel', cls: 'text-error' }
+      };
+      const itemsByCat = {};
+      (fb.items || []).forEach(i => { (itemsByCat[i.category] = itemsByCat[i.category] || []).push(i); });
+      const itemsHtml = fb.items && fb.items.length ? `
+        <div class="mt-5 pt-4 border-t border-outline-variant/20">
+          <p class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant mb-1">Body protokolu</p>
+          <p class="text-[10px] text-on-surface-variant mb-3">
+            <span class="text-green-600 dark:text-green-400 font-bold">✓ 100 %</span> zistené (priamo alebo všeobecnou otázkou) ·
+            <span class="text-amber-600 dark:text-amber-400 font-bold">◐ 75 / 50 %</span> čiastočne ·
+            <span class="text-error font-bold">✗ 0 %</span> nezistené</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
+            ${Object.entries(itemsByCat).map(([cat, items]) => `
+            <div>
+              <p class="text-[11px] font-bold text-on-surface mb-1">${escapeHtml(cat)}</p>
+              <ul class="space-y-1">${items.map(i => `
+                <li class="flex items-start gap-1.5 text-[11px] leading-snug">
+                  <span class="material-symbols-outlined text-sm ${STATUS_UI[i.status]?.cls || ''}" style="font-variation-settings:'FILL' 1;">${STATUS_UI[i.status]?.icon || 'help'}</span>
+                  <span class="flex-1"><span class="text-on-surface font-semibold">${escapeHtml(i.label)}</span>${i.critical ? ' <span class="text-[9px] font-bold text-error uppercase">kritické</span>' : ''}
+                    <span class="block text-on-surface-variant">${escapeHtml(i.statusLabel)}</span></span>
+                  <span class="font-bold text-on-surface-variant whitespace-nowrap">${Math.round(i.credit * 100)} %</span>
+                </li>`).join('')}</ul>
+            </div>`).join('')}
+          </div>
+        </div>` : '';
 
       const m = fb.metrics || {};
       const metric = (icon, label, value) => `
@@ -5079,12 +5209,13 @@ Vráť IBA platný JSON (všetky texty po slovensky, oslovuj dispečera v 2. oso
           ${metric('ambulance', 'Pomoc potvrdená', m.timeToDispatch !== null && m.timeToDispatch !== undefined ? 'po ' + formatSeconds(m.timeToDispatch) : 'nepotvrdená')}
           ${metric('forum', 'Repliky dispečera', (m.operatorTurns ?? 0) + ' (otázky: ' + (m.questions ?? 0) + ')')}
         </div>
+        ${breakdownHtml}
         ${commHtml ? `<div class="mb-4">${commHtml}</div>` : ''}
         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div class="space-y-3">${bars}</div>
           <div class="space-y-4">
-            ${section('Kritické chyby', fb.criticalErrors, 'error', 'text-error')}
-            ${section('Čo si urobil dobre', fb.strengths, 'thumb_up', 'text-green-600')}
+            ${bd ? '' : section('Kritické chyby', fb.criticalErrors, 'error', 'text-error')}
+            ${section('Čo ste urobili dobre', fb.strengths, 'thumb_up', 'text-green-600')}
             ${section('Chyby', fb.mistakes, 'report', 'text-amber-600')}
           </div>
         </div>
@@ -5092,6 +5223,7 @@ Vráť IBA platný JSON (všetky texty po slovensky, oslovuj dispečera v 2. oso
         <div class="mt-5 pt-4 border-t border-outline-variant/20">
           ${section('Odporúčania na ďalší hovor', fb.recommendations, 'lightbulb', 'text-primary')}
         </div>` : ''}
+        ${itemsHtml}
       </div>`;
     }
 
@@ -5105,7 +5237,18 @@ Vráť IBA platný JSON (všetky texty po slovensky, oslovuj dispečera v 2. oso
 
     // Starší hovor (pred zavedením spätnej väzby) dostane vyhodnotenie dodatočne z uloženého prepisu
     function ensureSessionFeedback(session) {
-      if (!session || session.feedback) return false;
+      if (!session) return false;
+      // Staršie automatické hodnotenie (bez rozpisu bodov) prepočítame novou logikou
+      if (session.feedback && session.feedback.source === 'local' && !session.feedback.version && Array.isArray(session.transcript) && session.transcript.length) {
+        const agent = session.scenario || findAgentForIncident(session.incidentType);
+        const fb = evaluateProtocol(session.incidentType, session.transcript, agent, session.duration || 0, session.location || null);
+        fb.backfilled = !!session.feedback.backfilled;
+        session.feedback = fb;
+        session.accuracy = fb.score;
+        session.completion = fb.breakdown.protocolScore;
+        return true;
+      }
+      if (session.feedback) return false;
       const transcript = Array.isArray(session.transcript) ? session.transcript : [];
       const agent = session.scenario || findAgentForIncident(session.incidentType);
       const fb = evaluateProtocol(session.incidentType, transcript, agent, session.duration || 0, session.location || null);
@@ -5344,7 +5487,7 @@ Vráť IBA platný JSON (všetky texty po slovensky, oslovuj dispečera v 2. oso
               <span class="flex items-center gap-1"><span class="material-symbols-outlined text-base">schedule</span>${escapeHtml(s.timestamp || '')}</span>
               ${s.duration ? `<span class="flex items-center gap-1"><span class="material-symbols-outlined text-base">timer</span>${formatSeconds(s.duration)}</span>` : ''}
               <span class="flex items-center gap-1"><span class="material-symbols-outlined text-base">person</span>${escapeHtml(entry.user)}</span>
-              ${s.weather ? `<span class="flex items-center gap-1 text-blue-600"><span class="material-symbols-outlined text-base">partly_cloudy_day</span>${escapeHtml(s.weather)}${s.temperature !== undefined && s.temperature !== null ? ' ' + escapeHtml(s.temperature) + '°C' : ''}</span>` : ''}
+              ${s.weather ? `<span class="flex items-center gap-1 text-blue-600"><span class="material-symbols-outlined text-base">partly_cloudy_day</span>${escapeHtml(weatherSk(s.weather))}${s.temperature !== undefined && s.temperature !== null ? ' ' + escapeHtml(s.temperature) + '°C' : ''}</span>` : ''}
             </div>
           </div>
           <div class="flex gap-2">
@@ -5360,7 +5503,7 @@ Vráť IBA platný JSON (všetky texty po slovensky, oslovuj dispečera v 2. oso
           <div class="col-span-2 md:col-span-1 bg-surface-container-low rounded-lg p-5 border border-outline-variant/10">
             <div class="flex items-center gap-2 mb-3"><span class="material-symbols-outlined text-primary text-base">description</span><h4 class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Scenár (čo mal dispečer zistiť)</h4></div>
             <dl class="space-y-1.5 text-[11px]">
-              ${[['Volajúci', sc.caller], ['Udalosť', sc.scenario], ['Miesto', sc.location], ['Zranený / stav', sc.injury], ['Závažnosť', sc.risk],
+              ${[['Volajúci', sc.caller], ['Udalosť', sc.scenario], ['Miesto', sc.location], ['Zranený / stav', sc.injury], ['Závažnosť', riskSk(sc.risk)],
                  ['Automatická poloha', s.location ? (LOCATION_SOURCE_LABELS[s.location.source] || s.location.source) + (s.location.accuracy ? ' ±' + formatDistance(s.location.accuracy) : '') : null],
                  ['Poloha určená dispečerom', s.location ? (s.location.pin ? (s.location.pin.label || 'áno') + ' (odchýlka ' + formatDistance(s.location.pinErrorMeters) + ')' : 'nie') : null]].filter(([, v]) => v).map(([k, v]) => `<div class="flex justify-between gap-3"><dt class="text-on-surface-variant">${k}</dt><dd class="font-bold text-on-surface text-right">${escapeHtml(v)}</dd></div>`).join('')}
             </dl>
@@ -5369,6 +5512,7 @@ Vráť IBA platný JSON (všetky texty po slovensky, oslovuj dispečera v 2. oso
           <div class="col-span-2 ${sc ? 'md:col-span-1' : ''} bg-surface-container-low rounded-lg p-5 border border-outline-variant/10">
             <div class="flex items-center gap-2 mb-3"><span class="material-symbols-outlined text-primary text-base">checklist</span><h4 class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Body protokolu</h4></div>
             ${(fb.completed || []).length ? `<div class="flex flex-wrap gap-1.5 mb-2">${chips(fb.completed, true)}</div>` : ''}
+            ${(fb.partial || []).length ? `<div class="flex flex-wrap gap-1.5 mb-2">${(fb.partial || []).map(t => `<span class="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-semibold border bg-amber-50 dark:bg-amber-900/20 text-amber-800 dark:text-amber-300 border-amber-200 dark:border-amber-700/40"><span class="material-symbols-outlined text-sm" style="font-variation-settings:'FILL' 1;">contrast</span>${escapeHtml(t)}</span>`).join('')}</div>` : ''}
             ${(fb.missing || []).length ? `<div class="flex flex-wrap gap-1.5">${chips(fb.missing, false)}</div>` : ''}
             ${!(fb.completed || []).length && !(fb.missing || []).length ? '<p class="text-[11px] text-on-surface-variant italic">Bez údajov.</p>' : ''}
           </div>
@@ -5519,11 +5663,11 @@ Vráť IBA platný JSON (všetky texty po slovensky, oslovuj dispečera v 2. oso
       const successCount = sessions.filter(s => s.accuracy >= FAILURE_THRESHOLD).length;
       const failedCount = sessions.filter(s => s.accuracy < FAILURE_THRESHOLD).length;
       if (currentFilter === 'all') {
-        if (countEl) countEl.textContent = sessions.length + ' session' + (sessions.length !== 1 ? 's' : '') + ` (${successCount} ✓/${failedCount} ✗)`;
+        if (countEl) countEl.textContent = formatCallCount(sessions.length) + ` (${successCount} ✓/${failedCount} ✗)`;
       } else if (currentFilter === 'success') {
-        if (countEl) countEl.textContent = successCount + ' success';
+        if (countEl) countEl.textContent = successCount + ' úspešných';
       } else if (currentFilter === 'failed') {
-        if (countEl) countEl.textContent = failedCount + ' failed';
+        if (countEl) countEl.textContent = failedCount + ' neúspešných';
       }
       if (sessions.length > 0) {
         const filteredSessions = sessions.filter(s => {
@@ -5548,7 +5692,7 @@ Vráť IBA platný JSON (všetky texty po slovensky, oslovuj dispečera v 2. oso
         sessionsWrapper.className = 'flex flex-col gap-3';
         listContainer.appendChild(sessionsWrapper);
       } else { sessionsWrapper.innerHTML = ''; }
-      if (sessions.length === 0) { sessionsWrapper.innerHTML = '<p class="text-center text-on-surface-variant text-sm py-8">No sessions yet. Run a dispatch to create one.</p>'; return; }
+      if (sessions.length === 0) { sessionsWrapper.innerHTML = '<p class="text-center text-on-surface-variant text-sm py-8">Zatiaľ žiadne hovory. Začnite nový hovor.</p>'; return; }
       const filteredSessions = sessions.filter(s => {
         if (currentFilter === 'all') return true;
         if (currentFilter === 'success') return s.accuracy >= FAILURE_THRESHOLD;
@@ -5556,19 +5700,19 @@ Vráť IBA platný JSON (všetky texty po slovensky, oslovuj dispečera v 2. oso
         return true;
       });
       const filteredCount = filteredSessions.length;
-      if (countEl) countEl.textContent = filteredCount + ' session' + (filteredCount !== 1 ? 's' : '');
-      if (filteredCount === 0) { sessionsWrapper.innerHTML = '<p class="text-center text-on-surface-variant text-sm py-8">No ' + currentFilter + ' sessions.</p>'; return; }
+      if (countEl) countEl.textContent = formatCallCount(filteredCount);
+      if (filteredCount === 0) { sessionsWrapper.innerHTML = '<p class="text-center text-on-surface-variant text-sm py-8">Žiadne hovory v tomto filtri.</p>'; return; }
       filteredSessions.forEach((session, index) => {
         const originalIndex = sessions.indexOf(session);
         const isActive = originalIndex === currentSessionIndex;
         const sessionEl = document.createElement('div');
         sessionEl.className = `p-4 rounded-lg flex flex-col gap-2 cursor-pointer border transition-all ${isActive ? 'bg-surface-container-lowest border-l-4 border-primary shadow-sm border-y-outline-variant/20 border-r-outline-variant/20' : 'bg-surface-container-low hover:bg-surface-container-high border-outline-variant/10'}`;
         const isFailed = session.accuracy < FAILURE_THRESHOLD;
-        const statusText = isFailed ? 'FAILED' : session.status;
+        const statusText = isFailed ? 'NEÚSPEŠNÝ' : 'ÚSPEŠNÝ';
         const statusColor = isFailed ? 'bg-red-200 dark:bg-red-900/60 text-red-800 dark:text-red-300' : 'bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-400';
         sessionEl.innerHTML = `
-      <div class="flex justify-between items-start"><div>${isActive ? '<span class="text-[9px] font-black text-primary mb-0.5 block uppercase">Active Selection</span>' : ''}<h3 class="font-bold text-sm">${getTranslatedIncidentType(session.incidentType)}</h3></div><span class="${statusColor} px-2 py-0.5 rounded text-[9px] font-black uppercase">${statusText}</span></div>
-      <div class="flex items-center gap-3 text-[11px] text-on-surface-variant"><div class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">calendar_today</span>${session.timestamp}</div>${session.weather ? `<div class="flex items-center gap-1 font-bold text-blue-600"><span class="material-symbols-outlined text-sm">wb_sunny</span>${session.weather}${session.temperature ? ' ' + session.temperature + '°C' : ''}</div>` : ''}<div class="flex items-center gap-1 font-bold"><span class="material-symbols-outlined text-sm">star</span>${session.accuracy}/100</div></div>`;
+      <div class="flex justify-between items-start"><div>${isActive ? '<span class="text-[9px] font-black text-primary mb-0.5 block uppercase">Vybraný hovor</span>' : ''}<h3 class="font-bold text-sm">${getTranslatedIncidentType(session.incidentType)}</h3></div><span class="${statusColor} px-2 py-0.5 rounded text-[9px] font-black uppercase">${statusText}</span></div>
+      <div class="flex items-center gap-3 text-[11px] text-on-surface-variant"><div class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">calendar_today</span>${session.timestamp}</div>${session.weather ? `<div class="flex items-center gap-1 font-bold text-blue-600"><span class="material-symbols-outlined text-sm">wb_sunny</span>${weatherSk(session.weather)}${session.temperature ? ' ' + session.temperature + '°C' : ''}</div>` : ''}<div class="flex items-center gap-1 font-bold"><span class="material-symbols-outlined text-sm">star</span>${session.accuracy}/100</div></div>`;
         sessionEl.addEventListener('click', () => { currentSessionIndex = originalIndex; updateDetailView(originalIndex); });
         sessionsWrapper.appendChild(sessionEl);
       });
@@ -5597,8 +5741,7 @@ Vráť IBA platný JSON (všetky texty po slovensky, oslovuj dispečera v 2. oso
     function computeBaselineCompletion(incidentType, transcript) {
       if (!transcript || transcript.length === 0) return 0;
       const r = evaluateProtocol(incidentType, transcript, typeof activeAgent !== 'undefined' ? activeAgent : null, 0);
-      const total = r.completed.length + r.missing.length;
-      return total ? Math.round((r.completed.length / total) * 100) : 0;
+      return r.breakdown ? r.breakdown.protocolScore : 0;
     }
 
     // ─── Extract specific key facts actually mentioned in the call ───────────
@@ -5713,39 +5856,39 @@ Vráť IBA platný JSON (všetky texty po slovensky, oslovuj dispečera v 2. oso
       const items = [];
 
       if (insights.location) {
-        items.push({ icon: 'location_on', label: 'Location', value: capitalize(insights.location), status: 'good' });
+        items.push({ icon: 'location_on', label: 'Poloha', value: capitalize(insights.location), status: 'good' });
       } else {
-        items.push({ icon: 'location_off', label: 'Location', value: 'Not mentioned during the call', status: 'bad' });
+        items.push({ icon: 'location_off', label: 'Poloha', value: 'Počas hovoru nezaznela', status: 'bad' });
       }
 
       if (insights.injury) {
-        items.push({ icon: 'personal_injury', label: 'Patient Condition', value: capitalize(insights.injury), status: 'warn' });
+        items.push({ icon: 'personal_injury', label: 'Stav pacienta', value: capitalize(insights.injury), status: 'warn' });
       } else {
-        items.push({ icon: 'personal_injury', label: 'Patient Condition', value: 'Not assessed during the call', status: 'bad' });
+        items.push({ icon: 'personal_injury', label: 'Stav pacienta', value: 'Počas hovoru nezistený', status: 'bad' });
       }
 
       if (insights.patientCount) {
-        items.push({ icon: 'group', label: 'Persons Involved', value: capitalize(insights.patientCount), status: 'good' });
+        items.push({ icon: 'group', label: 'Zúčastnené osoby', value: capitalize(insights.patientCount), status: 'good' });
       } else {
-        items.push({ icon: 'group', label: 'Persons Involved', value: 'Number of persons not established', status: 'bad' });
+        items.push({ icon: 'group', label: 'Zúčastnené osoby', value: 'Počet osôb nezistený', status: 'bad' });
       }
 
       if (insights.weather) {
-        items.push({ icon: 'partly_cloudy_day', label: 'Environmental Conditions', value: capitalize(insights.weather), status: 'good' });
+        items.push({ icon: 'partly_cloudy_day', label: 'Podmienky prostredia', value: capitalize(insights.weather), status: 'good' });
       } else {
-        items.push({ icon: 'partly_cloudy_day', label: 'Environmental Conditions', value: 'Not documented during the call', status: 'bad' });
+        items.push({ icon: 'partly_cloudy_day', label: 'Podmienky prostredia', value: 'Počas hovoru nezaznamenané', status: 'bad' });
       }
 
       if (insights.timeInfo) {
-        items.push({ icon: 'schedule', label: 'Incident Timing', value: capitalize(insights.timeInfo), status: 'good' });
+        items.push({ icon: 'schedule', label: 'Čas udalosti', value: capitalize(insights.timeInfo), status: 'good' });
       } else {
-        items.push({ icon: 'schedule', label: 'Incident Timing', value: 'Time of incident not established', status: 'bad' });
+        items.push({ icon: 'schedule', label: 'Čas udalosti', value: 'Čas udalosti nezistený', status: 'bad' });
       }
 
       if (insights.hazard) {
-        items.push({ icon: 'warning', label: 'Hazard Information', value: capitalize(insights.hazard), status: 'warn' });
+        items.push({ icon: 'warning', label: 'Nebezpečenstvá', value: capitalize(insights.hazard), status: 'warn' });
       } else {
-        items.push({ icon: 'warning', label: 'Hazard Information', value: 'No hazards mentioned', status: 'good' });
+        items.push({ icon: 'warning', label: 'Nebezpečenstvá', value: 'Žiadne nebezpečenstvo nespomenuté', status: 'good' });
       }
 
       return items;
@@ -5769,13 +5912,13 @@ Vráť IBA platný JSON (všetky texty po slovensky, oslovuj dispečera v 2. oso
 
       let overallNote = '';
       if ((accuracy ?? 100) < FAILURE_THRESHOLD) {
-        overallNote = `⚠️ FAILED: Score below ${FAILURE_THRESHOLD}%. Protocol not met. Mandatory review required before next deployment.`;
+        overallNote = `⚠️ NEÚSPEŠNÝ: skóre pod ${FAILURE_THRESHOLD} %. Protokol nebol splnený – pred ďalším hovorom si prejdite chyby.`;
       } else if (badCount === 0) {
-        overallNote = 'All key information was captured during this call.';
+        overallNote = 'Počas hovoru boli zistené všetky kľúčové informácie.';
       } else if (badCount <= 2) {
-        overallNote = `${badCount} item${badCount > 1 ? 's' : ''} missing from verbal exchange — verify via checklist or follow-up.`;
+        overallNote = `Chýbajúce body: ${badCount} – overte ich v kontrolnom zozname alebo doplňujúcou otázkou.`;
       } else {
-        overallNote = `${badCount} critical items were not addressed verbally. Review protocol before next deployment.`;
+        overallNote = `Nezazneli kritické body (${badCount}). Pred ďalším hovorom si prejdite protokol.`;
       }
 
       const cards = items.map(item => {
@@ -5801,10 +5944,10 @@ Vráť IBA platný JSON (všetky texty po slovensky, oslovuj dispečera v 2. oso
       return `
     <div class="mb-3 flex items-center gap-2">
       <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-surface-container text-[10px] font-bold text-on-surface-variant border border-outline-variant/20">
-        <span class="material-symbols-outlined text-sm text-[#388e3c]" style="font-variation-settings:'FILL' 1;">check_circle</span>${goodCount} confirmed
+        <span class="material-symbols-outlined text-sm text-[#388e3c]" style="font-variation-settings:'FILL' 1;">check_circle</span>${goodCount} zistených
       </span>
       <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-error-container/30 text-[10px] font-bold text-error border border-error/15">
-        <span class="material-symbols-outlined text-sm" style="font-variation-settings:'FILL' 1;">cancel</span>${badCount} missing
+        <span class="material-symbols-outlined text-sm" style="font-variation-settings:'FILL' 1;">cancel</span>${badCount} chýba
       </span>
     </div>
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">${cards}</div>
@@ -5824,10 +5967,10 @@ Vráť IBA platný JSON (všetky texty po slovensky, oslovuj dispečera v 2. oso
       const isFailure = (s?.accuracy || 0) < FAILURE_THRESHOLD;
       const statusColor = isFailure ? 'text-error' : 'text-green-600';
       const circleColor = isFailure ? 'text-error' : 'text-primary';
-      const statusText = isFailure ? 'FAILED' : s.status;
+      const statusText = isFailure ? 'NEÚSPEŠNÝ' : 'ÚSPEŠNÝ';
       const v = s.verificationItems;
 
-      let transcriptHtml = '<p class="text-on-surface-variant italic text-center py-4">No transcript recorded for this session.</p>';
+      let transcriptHtml = '<p class="text-on-surface-variant italic text-center py-4">K tomuto hovoru nie je uložený prepis.</p>';
       if (s.transcript && s.transcript.length > 0) {
         transcriptHtml = s.transcript.map(msg => {
           const isDispatcher = isOperatorRole(msg.role);
@@ -5844,45 +5987,45 @@ Vráť IBA platný JSON (všetky texty po slovensky, oslovuj dispečera v 2. oso
       document.getElementById('detail-panel').innerHTML = `
     <div class="flex justify-between items-center mb-6">
       <div>
-        <h2 class="text-2xl font-black text-on-surface tracking-tight mb-1">${getTranslatedIncidentType(s.incidentType)} — Detailed Report</h2>
+        <h2 class="text-2xl font-black text-on-surface tracking-tight mb-1">${getTranslatedIncidentType(s.incidentType)} — podrobná správa</h2>
         <div class="flex items-center gap-1.5 text-xs text-on-surface-variant font-semibold"><span class="material-symbols-outlined text-base">schedule</span>${s.timestamp}</div>
       </div>
-      <button onclick="exportPDF()" class="bg-primary hover:bg-primary-container text-on-primary px-4 py-2 rounded-lg text-xs font-bold transition-all active:scale-95 flex items-center gap-2"><span class="material-symbols-outlined text-base">download</span>Export PDF</button>
+      <button onclick="exportPDF()" class="bg-primary hover:bg-primary-container text-on-primary px-4 py-2 rounded-lg text-xs font-bold transition-all active:scale-95 flex items-center gap-2"><span class="material-symbols-outlined text-base">download</span>Export do PDF</button>
     </div>
     <div class="grid grid-cols-2 gap-5">
       ${renderFeedbackCard(s)}
       <div class="col-span-2 md:col-span-1 bg-surface-container-low rounded-lg p-5 border border-outline-variant/10">
-        <h4 class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-4">Adherence to protocol</h4>
+        <h4 class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-4">Dodržanie protokolu</h4>
         <div class="flex flex-col items-center justify-center py-2">
           <div class="relative w-24 h-24 flex items-center justify-center">
             <svg class="w-full h-full -rotate-90"><circle class="text-surface-container-highest" cx="48" cy="48" fill="none" r="42" stroke="currentColor" stroke-width="10"></circle><circle class="${circleColor}" cx="48" cy="48" fill="none" r="42" stroke="currentColor" stroke-dasharray="${circumference}" stroke-dashoffset="${offset.toFixed(2)}" stroke-width="10"></circle></svg>
             <span class="absolute text-xl font-black ${statusColor}">${s.accuracy}%</span>
           </div>
           <div class="mt-4 w-full space-y-1 text-[11px]">
-            <div class="flex justify-between"><span class="text-on-surface-variant">Status</span><span class="font-bold ${statusColor}">${statusText}</span></div>
-            <div class="flex justify-between"><span class="text-on-surface-variant">Weather</span><span class="font-bold text-blue-600">${s.weather || '—'}${s.temperature ? ' ' + s.temperature + '°C' : ''}</span></div>
-            <div class="flex justify-between"><span class="text-on-surface-variant">Score</span><span class="font-bold">${s.accuracy}/100</span></div>
+            <div class="flex justify-between"><span class="text-on-surface-variant">Stav</span><span class="font-bold ${statusColor}">${statusText}</span></div>
+            <div class="flex justify-between"><span class="text-on-surface-variant">Počasie</span><span class="font-bold text-blue-600">${weatherSk(s.weather) || '—'}${s.temperature ? ' ' + s.temperature + '°C' : ''}</span></div>
+            <div class="flex justify-between"><span class="text-on-surface-variant">Skóre</span><span class="font-bold">${s.accuracy}/100</span></div>
           </div>
         </div>
       </div>
       <div class="col-span-2 md:col-span-1 bg-surface-container-low rounded-lg p-5 border border-outline-variant/10">
-        <h4 class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-4">Rescue Verification</h4>
+        <h4 class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-4">Overenie zásahu</h4>
         <div class="space-y-2">
-          ${verificationRow('GPS Coordinates Verified', v.gpsVerified)}
-          ${verificationRow('Weather Conditions Noted', v.weatherNoted)}
-          ${verificationRow('Life-threatening Injuries', v.injuriesChecked)}
-          ${verificationRow('Avalanche Risk Assessed', v.avalancheAssessed)}
+          ${verificationRow('GPS súradnice overené', v.gpsVerified)}
+          ${verificationRow('Počasie zaznamenané', v.weatherNoted)}
+          ${verificationRow('Život ohrozujúce zranenia', v.injuriesChecked)}
+          ${verificationRow('Lavínové riziko posúdené', v.avalancheAssessed)}
         </div>
       </div>
       <div class="col-span-2 bg-surface-container-low rounded-lg p-5 border border-outline-variant/10">
         <div class="flex items-center gap-2 mb-4">
           <span class="material-symbols-outlined text-primary text-base">analytics</span>
-          <h4 class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Call Intelligence Summary</h4>
+          <h4 class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Zhrnutie hovoru</h4>
         </div>
         ${s.llmAnalysis ? `
         ${s.completedItems && s.completedItems.length > 0 ? `
         <div class="mb-3">
-          <p class="text-[10px] font-bold dark:text-green-400 text-green-600 uppercase mb-2">Completed:</p>
+          <p class="text-[10px] font-bold dark:text-green-400 text-green-600 uppercase mb-2">Splnené:</p>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
             ${s.completedItems.map(item => `
             <div class="flex items-start gap-2 p-2 rounded-lg dark:bg-green-900/30 bg-green-50 border dark:border-green-700/50 border-green-200">
@@ -5893,7 +6036,7 @@ Vráť IBA platný JSON (všetky texty po slovensky, oslovuj dispečera v 2. oso
         </div>` : ''}
         ${s.missingItems && s.missingItems.length > 0 ? `
         <div class="mt-3 pt-3 border-t border-outline-variant/20">
-          <p class="text-[10px] font-bold dark:text-red-400 text-error uppercase mb-2">Not Addressed:</p>
+          <p class="text-[10px] font-bold dark:text-red-400 text-error uppercase mb-2">Nesplnené:</p>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
             ${s.missingItems.map(item => `
             <div class="flex items-start gap-2 p-2 rounded-lg dark:bg-red-900/30 bg-error-container/30 border dark:border-red-700/50 border-error/20">
@@ -5909,12 +6052,12 @@ Vráť IBA platný JSON (všetky texty po slovensky, oslovuj dispečera v 2. oso
       <div class="col-span-2 bg-surface-container-low rounded-lg p-5 border border-outline-variant/10">
         <div class="flex items-center gap-2 mb-3">
           <span class="material-symbols-outlined text-primary text-base">edit_note</span>
-          <h4 class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Dispatcher Notes</h4>
+          <h4 class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Poznámky dispečera</h4>
         </div>
         <p class="text-[12px] text-on-surface leading-relaxed">${s.situationIntel}</p>
       </div>` : ''}
       <div class="col-span-2 bg-surface-container-low rounded-lg p-5 border border-outline-variant/10">
-        <div class="flex items-center gap-2 mb-3"><span class="material-symbols-outlined text-primary text-base">chat</span><h4 class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Call Transcript</h4></div>
+        <div class="flex items-center gap-2 mb-3"><span class="material-symbols-outlined text-primary text-base">chat</span><h4 class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Prepis hovoru</h4></div>
         <div class="space-y-1 max-h-52 overflow-y-auto no-scrollbar">${transcriptHtml}</div>
       </div>
     </div>`;
