@@ -28,6 +28,17 @@ Dvojklik na `spustit.command` → otvorí http://localhost:8000/
 (ručne: `python3 -m http.server 8000` v tomto priečinku).
 Ak `config.js` chýba, skopíruj `config.example.js` → `config.js` a doplň kľúče.
 
+## Kde je web zverejnený
+
+| Kde | Adresa | Ako sa aktualizuje |
+|---|---|---|
+| GitHub Pages | https://tanarehusovalyceum.github.io/ADREMA/ | automaticky po každom `git push` do `main` (`.github/workflows/pages.yml`) |
+| Vercel | https://adrema.vercel.app | `npx vercel@60.1.1 deploy --prod`, alebo pripojením repozitára vo Verceli |
+| Websupport | vlastná doména | ručne: Actions → *Nasadenie na Websupport* → Run workflow (alebo premenná `DEPLOY_WEBSUPPORT` = `true`) |
+
+Repozitár: https://github.com/tanarehusovalyceum/ADREMA – kľúče sú v **Settings → Secrets and variables → Actions**
+(`VAPI_PUBLIC_KEY`, `ELEVENLABS_VOICE_ID`), nie v kóde.
+
 ## Nasadenie na Vercel (aktuálne: https://adrema.vercel.app)
 
 Projekt `adrema` je prepojený s týmto priečinkom (`.vercel/`). Kľúče sú vo Verceli ako
