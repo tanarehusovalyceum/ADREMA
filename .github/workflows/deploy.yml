@@ -1,4 +1,5 @@
-# Po každom push do vetvy main nahrá web na Websupport cez FTP.
+# Nahrá web na Websupport cez FTP. Spúšťa sa ručne (Actions → Run workflow),
+# alebo po každom push, ak v Settings → Variables nastavíš DEPLOY_WEBSUPPORT = true.
 # Potrebné GitHub Secrets: FTP_SERVER, FTP_USERNAME, FTP_PASSWORD, VAPI_PUBLIC_KEY, ELEVENLABS_VOICE_ID
 # Voliteľné Secrets: GROQ_API_KEY, VAPI_LLM_MODEL, ELEVENLABS_MODEL, SUPABASE_URL, SUPABASE_KEY
 # Voliteľné Variables: FTP_SERVER_DIR (predvolene ./web/), FTP_PROTOCOL (predvolene ftps)
@@ -15,6 +16,7 @@ concurrency:
 
 jobs:
   deploy:
+    if: github.event_name == 'workflow_dispatch' || vars.DEPLOY_WEBSUPPORT == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Stiahnuť kód
