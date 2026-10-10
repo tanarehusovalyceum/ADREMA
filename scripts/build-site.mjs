@@ -4,7 +4,7 @@ import { mkdirSync, copyFileSync, writeFileSync, rmSync } from 'node:fs';
 import { buildConfig } from './build-config.mjs';
 
 // .htaccess je len pre Websupport (Apache); Vercel a GitHub Pages ho nepoužívajú
-const FILES = ['index.html', 'simulator.html', 'login.html', 'onboarding.html', 'feedback.html', 'site.css',
+const FILES = ['index.html', 'simulator.html', 'login.html', 'onboarding.html', 'feedback.html', 'sukromie.html', 'site.css', 'privacy-notice.js',
   ...(process.env.VERCEL || process.env.SKIP_HTACCESS ? [] : ['.htaccess'])];
 
 try {

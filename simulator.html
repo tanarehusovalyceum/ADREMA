@@ -17,6 +17,7 @@
     }
   </script>
   <script src="config.js"></script>
+  <script src="privacy-notice.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
     rel="stylesheet" />
@@ -1336,7 +1337,12 @@
     ];
 
     let selectedAgentIndex = Math.min(parseInt(localStorage.getItem('selectedAgentIndex') || '0'), AGENTS.length - 1);
-    let useRandomAgent = localStorage.getItem('useRandomAgent') === 'true';
+    // Predvolene náhodný scenár; jednorazovo zapnúť aj tým, ktorí mali uložený pevný scenár
+    if (!localStorage.getItem('adrema_random_default_v1')) {
+      localStorage.setItem('useRandomAgent', 'true');
+      localStorage.setItem('adrema_random_default_v1', 'true');
+    }
+    let useRandomAgent = localStorage.getItem('useRandomAgent') !== 'false';
     let activeAgent = null;
 
     function getTranslatedIncidentType(rawType) {
@@ -1353,14 +1359,35 @@
       return rawType;
     }
 
-    function getCurrentAgent() {
-      if (useRandomAgent) {
-        const agent = AGENTS[Math.floor(Math.random() * AGENTS.length)];
-        activeAgent = agent;
-        return agent;
+    // Náhodné poradie bez opakovania: všetky scenáre sa vystriedajú, kým sa niektorý zopakuje,
+    // a nikdy nejdú dva rovnaké po sebe (ani na prelome kôl)
+    function nextRandomAgentIndex() {
+      let bag = [];
+      try { bag = JSON.parse(localStorage.getItem('adrema_scenario_bag') || '[]'); } catch (e) { bag = []; }
+      bag = bag.filter(i => Number.isInteger(i) && i >= 0 && i < AGENTS.length);
+      const last = parseInt(localStorage.getItem('adrema_last_scenario') ?? '-1', 10);
+      if (bag.length === 0) {
+        bag = AGENTS.map((_, i) => i);
+        for (let i = bag.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [bag[i], bag[j]] = [bag[j], bag[i]]; }
+        if (bag.length > 1 && bag[0] === last) bag.push(bag.shift());
       }
-      activeAgent = AGENTS[selectedAgentIndex] || AGENTS[0];
+      const index = bag.shift();
+      try {
+        localStorage.setItem('adrema_scenario_bag', JSON.stringify(bag));
+        localStorage.setItem('adrema_last_scenario', String(index));
+      } catch (e) { }
+      return index;
+    }
+
+    // Vyberie scenár pre nový hovor (volá sa raz na začiatku hovoru)
+    function pickAgentForCall() {
+      activeAgent = useRandomAgent ? AGENTS[nextRandomAgentIndex()] : (AGENTS[selectedAgentIndex] || AGENTS[0]);
       return activeAgent;
+    }
+
+    // Scenár práve prebiehajúceho hovoru (ak ešte žiadny nie je, vyberie sa)
+    function getCurrentAgent() {
+      return activeAgent || pickAgentForCall();
     }
 
     function getCurrentAgentId() {
@@ -3439,7 +3466,7 @@
     const VAPI_SDK_URL = 'https://cdn.jsdelivr.net/npm/@vapi-ai/web@2.7.1/+esm';
     // Poradie LLM modelov: prvý je najľudskejší, ďalšie sú záloha. Ak Vapi ukončí hovor chybou modelu,
     // model sa zapamätá ako nefunkčný a ďalší hovor použije nasledujúci (Vapi pre Anthropic nemá vlastný fallback).
-    const VAPI_LLM_MODELS = ['claude-haiku-4-5-20251001'];
+    const VAPI_LLM_MODELS = ['claude-sonnet-4-5-20250929', 'claude-haiku-4-5-20251001'];
     const VAPI_LLM_MODEL = VAPI_LLM_MODELS[0];
     let lastEndedReason = null, activeLlmModel = null, callFailed = false;
 
@@ -3522,9 +3549,115 @@
       return VapiClass;
     }
 
+    // ─── Osobnosti volajúcich (kľúč = prvé dve číslice názvu scenára) ───
+    // gender určuje mužský/ženský hlas; spontaneous = detaily, ktoré volajúci sám od seba vplietne do hovoru
+    const CALLER_PERSONAS = {
+      '01': {
+        voiceId: 'TX3LPaxmHKxFdv7VOQHJ', // Liam – mladší muž, artikulovaný
+        gender: 'male',
+        who: 'Marek, 34 rokov, programátor z Bratislavy. Išiel sám na túru po pracovnom školení, podcenil počasie a teraz je stratený v hmle.',
+        personality: 'Normálne sebavedomý chalan, ktorý všetko zvládne sám – a práve preto ho teraz drví strach a hanba. Zo začiatku sa snaží znieť v pohode a ospravedlňuje sa, že „otravuje“, ale maska rýchlo padá. Je sám, stmieva sa, je mu zima a prvýkrát v živote má pocit, že sa nemusí vrátiť domov.',
+        speech: 'Bratislavská hovorová reč: „jak“, „fakt“, „čo ja viem“, „v pohode… teda nie v pohode“. Keď sa bojí, hovorí rýchlo a trhane, hlas sa mu láme, zhlboka dýcha do telefónu.',
+        emotion: 'Emočná krivka: 1) začiatok – hanblivý, nervózny smiech, bagatelizuje („asi nič vážne, ale…“); 2) po pár replikách strach – uvedomuje si tmu, zimu a že nevie, kde je, hlas sa trasie; 3) ak operátor nedá jasný postup alebo dlho mlčí, prepadne panike až plaču („ja tu zamrznem… ja nechcem tu zostať“); 4) keď mu operátor dá konkrétne úlohy a povie, že po neho idú, citeľne sa upokojí a je vďačný. Silné momenty: zvuk v kosodrevine (bojí sa medveďa), pošmyknutie na kameňoch, keď si všimne, že batéria rýchlo klesá.',
+        spontaneous: ['mobil mu ukazuje dvanásť percent batérie a stále klesá', 'kamoš mu hovoril, nech nechodí sám', 'v kosodrevine niečo zapraskalo a bojí sa, či to nie je medveď', 'už sa stmieva a nevidí ani na päť metrov', 'pošmykol sa na mokrých kameňoch a odrel si ruku', 'má len mikinu a bežecké tenisky a trasie sa od zimy', 'mama ani nevie, že išiel do hôr', 'na poslednom rázcestí si odfotil tabuľu, ale nevie prečítať názov']
+      },
+      '02': {
+        voiceId: 'bIHbv24MWmeRgasZH58o', // Will – mladý muž, mladícky
+        gender: 'male',
+        who: 'Tomáš, 25 rokov. Je na výlete s priateľkou Emou, ktorú pri desiate bodla osa.',
+        personality: 'Mladý, športový, rýchlo prepadne panike. Potichu nadáva, je zúfalý a stále sa prihovára Eme. Má výčitky, že na alergiu zabudli.',
+        speech: 'Mladícka hovorová slovenčina, krátke vety, občas „do riti“ alebo „kurnik“, opakuje meno „Ema, Emka“.',
+        spontaneous: ['Ema raz spomínala alergiu, ale adrenalínové pero nechala v aute', 'auto majú na parkovisku v Súľove', 'pery a krk jej strašne opúchajú', 'okolo idú nejakí turisti a nevie, či ich má zavolať', 'Ema chrčí a chytá sa za krk']
+      },
+      '03': {
+        voiceId: 'XrExE9yKIg1WjnnlVkGX', // Matilda – žena v strednom veku, vrúcna
+        gender: 'female',
+        who: 'Jana, 45 rokov, učiteľka. Manžel Peter (48) sa práve zrútil v obývačke panelákového bytu.',
+        personality: 'Praktická, ale celá sa trasie. Medzi vetami volá na manžela („Peťo, Peťo, počuješ ma?“). Myslí aj na syna, ktorý je v byte.',
+        speech: 'Spisovnejšia slovenčina, ktorá sa v strese láme. Opakuje „preboha“, „to nie je možné“.',
+        spontaneous: ['Peter sa ráno sťažoval, že ho pichá na hrudi, a ona ho posielala k doktorovi', 'dvanásťročný syn plače vo vedľajšej izbe', 'sú na siedmom poschodí a nevie, či ide výťah', 'Peter divne chrčí, akoby lapal po dychu', 'má otvoriť dvere záchranárom?']
+      },
+      '04': {
+        voiceId: 'iP95p4xoKVk53GoZ742B', // Chris – muž, uvoľnený, hovorový
+        gender: 'male',
+        who: 'Matej, 34 rokov, kuriér. V noci išiel okolo a našiel auto narazené do stromu. Vodiča nepozná.',
+        personality: 'Snaží sa byť vecný a užitočný, no je vystrašený z tmy a dažďa. Má strach, či auto nezačne horieť.',
+        speech: 'Západoslovenská hovorová reč, „tu je tma jak v rohu“, „neviem, neviem“.',
+        spontaneous: ['zapol svoje výstražné svetlá', 'z motora sa dymí, nevie, či to nie je oheň', 'vodiča vôbec nepozná, len išiel okolo z roboty', 'má tu slabý signál, hovor môže vypadnúť', 'leje mu za golier a nemá baterku, svieti si mobilom']
+      },
+      '05': {
+        voiceId: 'IKne3meq5aSn9XLyUdCD', // Charlie – mladý muž, živý
+        gender: 'male',
+        who: 'Matúš, 29 rokov, otec. Je doma sám s trojročnou dcérkou Sofiou, ktorá prehltla lego kocku. Volá z pevnej linky.',
+        personality: 'Extrémna panika, hlas sa mu láme. Dcérku volá „Sofinka“. Má obrovské výčitky.',
+        speech: 'Rýchla, zadýchaná reč, nedokončené vety, „bože, bože“, „robte niečo“.',
+        spontaneous: ['manželka je v práci a on odišiel len na sekundu do kuchyne', 'tie lego kocky sú od staršieho brata', 'doma šteká pes a on naňho kričí, nech je ticho', 'Sofinka modrie okolo pier', 'chce bežať k susedovi, ktorý je zdravotník']
+      },
+      '06': {
+        voiceId: 'cgSgspJ2msm6clMCkdW9', // Jessica – mladá žena, výrazná
+        gender: 'female',
+        who: 'Lenka, 26 rokov, študentka. Našla priateľa Filipa (28) v bezvedomí vo vani v starom byte s plynovou karmou.',
+        personality: 'Tichšia, zmätená a vystrašená. Sama je otrávená, takže sa ťažšie sústreďuje, opakuje sa a niekedy zabudne, čo sa operátor pýtal.',
+        speech: 'Mladá hovorová slovenčina, „neviem, čo mám robiť“, „počkajte… čo?“.',
+        spontaneous: ['strašne ju bolí hlava a točí sa jej', 'tá karma vždy divne hučí', 'majiteľ bytu mal prísť karmu opraviť už minulý týždeň', 'je jej zle od žalúdka', 'Filip je celý červený v tvári']
+      },
+      '07': {
+        voiceId: 'Xb7hH8MSUJpSbSDYk0k2', // Alice – rázna žena v strednom veku
+        gender: 'female',
+        who: 'Silvia, 52 rokov, gazdiná z osady pri Terchovej. Manžel Jozef (54) sa porezal motorovou pílou do stehna pri rúbaní dreva.',
+        personality: 'Rázna dedinská žena, prakticky zmýšľajúca, ale teraz vystrašená na smrť. Prihovára sa manželovi („Jožo, nezaspávaj mi!“) a modlí sa.',
+        speech: 'Terchovská/severoslovenská hovorová reč: „šak“, „hej“, „ta“, „Panenka Mária“, „jak z vola“.',
+        spontaneous: ['vravela mu, nech to rúbanie nechá na syna', 'krvi je všade jak z vola', 'sused Ďuro má auto, nemôže ho zviezť?', 'sú za hájovňou, pri drevenom kríži', 'Jožo je celý biely a chladný']
+      },
+      '08': {
+        voiceId: 'N2lVS1w4EtoT3dr4eOWO', // Callum – muž, intenzívny
+        gender: 'male',
+        who: 'Ján, 32 rokov, skúsený lezec. Jeho kamarát Michal (30) spadol na ferrate a visí v postroji pod ním.',
+        personality: 'Snaží sa byť pokojný a technický, ale má výčitky. Chce zliezť a pomôcť sám, aj keď to môže byť nebezpečné.',
+        speech: 'Lezecký slang: „istenie“, „slučka“, „karabína“, „lano drží“. Rýchle vecné vety, ktoré sa občas zlomia.',
+        spontaneous: ['je asi päť metrov nad Michalom', 'istenie drží a lano je v poriadku', 'Michal hovorí, že mu tŕpnu nohy', 'má pri sebe ešte jednu slučku a karabínu', 'zvažuje, či k nemu nezlezie']
+      },
+      '09': {
+        voiceId: 'EXAVITQu4vr4xnSDxMaL', // Sarah – žena, mäkký tichší hlas
+        gender: 'female',
+        who: 'Katarína, 45 rokov, skúsená turistka a mama dvoch detí. Spadla zo svahu pod Kriváňom, má zlomenú nohu a je sama v hmle.',
+        personality: 'Tichá, potláčaná panika. Hanbí sa, že sa jej to stalo. Je jej zima a myslí na deti.',
+        speech: 'Pokojnejšia, ale roztrasená reč, drkoce zubami, občas sa ospravedlní („prepáčte, je mi strašná zima“).',
+        spontaneous: ['zuby jej drkocú od zimy', 'deťom povedala, že bude doma o šiestej', 'batéria v mobile má tridsať percent', 'nevidí ani chodník, len hmlu a kosodrevinu', 'noha je vykrútená a nedá sa na ňu postaviť']
+      },
+      '10': {
+        voiceId: 'nPczCjzI2devNBz1zQrb', // Brian – muž v strednom veku, hlboký hlas
+        gender: 'male',
+        who: 'Peter, 40 rokov, otec. Jeho syn Lukáš (14) spadol z rebríka v rokline Suchá Belá do ľadového potoka.',
+        personality: 'Ochranársky otec s obrovskými výčitkami. Chce syna hneď vytiahnuť z vody (operátor ho musí zastaviť kvôli chrbtici). Je netrpezlivý a rozčúlený.',
+        speech: 'Rázna, prerušovaná reč, zvýšený hlas, „ja ho tam nenechám!“.',
+        spontaneous: ['chce ho vytiahnuť z tej ľadovej vody', 'ostatní turisti tam len stoja a pozerajú', 'Lukáš hovorí, že ho bolí chrbát a necíti nohy', 'signál tu skoro nie je, hovor môže vypadnúť', 'oni mali ísť až o týždeň, on to vymyslel']
+      }
+    };
+
+    function getCallerPersona(agent) {
+      return CALLER_PERSONAS[(agent?.name || '').slice(0, 2)] || null;
+    }
+
+    // Hlas volajúceho – poradie priority:
+    // 1) REACT_APP_CALLER_VOICES['07'] v config.js (napr. rodený slovenský hlas z Voice Library)
+    // 2) REACT_APP_ELEVENLABS_VOICE_ID_FEMALE / _MALE (jeden hlas pre všetky ženy / mužov)
+    // 3) vlastný hlas volajúceho z CALLER_PERSONAS (každý znie inak)
+    // 4) REACT_APP_ELEVENLABS_VOICE_ID
+    function getCallerVoiceId(agent) {
+      const key = (agent?.name || '').slice(0, 2);
+      const persona = getCallerPersona(agent);
+      let perCaller = getEnv('REACT_APP_CALLER_VOICES');
+      if (typeof perCaller === 'string') { try { perCaller = JSON.parse(perCaller || '{}'); } catch (e) { perCaller = {}; } }
+      const byGender = persona?.gender === 'female' ? getEnv('REACT_APP_ELEVENLABS_VOICE_ID_FEMALE')
+        : persona?.gender === 'male' ? getEnv('REACT_APP_ELEVENLABS_VOICE_ID_MALE') : '';
+      return (perCaller && perCaller[key]) || byGender || persona?.voiceId || getEnv('REACT_APP_ELEVENLABS_VOICE_ID');
+    }
+
     // Podrobný systémový prompt: AI hrá volajúceho v panike, operátor (používateľ) je dispečer linky 112
     function buildEmergencyCallerPrompt(agent, voiceModel) {
       const a = agent || {};
+      const persona = getCallerPersona(agent);
       const audioTags = voiceModel === 'eleven_v3';
       const weather = a.weather ? `${a.weather}, ${a.temp}°C` : 'neznáme';
       return `# ROLA
@@ -3540,6 +3673,19 @@ Si VOLAJÚCI na slovenskú tiesňovú linku 112. NIE SI asistent, operátor ani 
 - Čas udalosti: ${a.time || 'teraz'}
 - Závažnosť (len pre teba, NIKDY ju nevyslovuj): ${a.risk || 'HIGH'}
 Detaily, ktoré nie sú uvedené, si realisticky a konzistentne domysli (mená, farba auta, orientačné body…) a počas hovoru ich už nemeň.
+${persona ? `
+# KTO SI (tvoja osobnosť – hraj ju po celý hovor)
+- ${persona.who}
+- Povaha: ${persona.personality}
+- Spôsob reči: ${persona.speech}
+${persona.emotion ? `- ${persona.emotion}\n- Emócie musia byť počuť v každej replike – v slovách, prerušeniach, dychu${audioTags ? ' aj v hlasových značkách' : ''}. Nehovor ploché vecné vety.` : ''}
+` : ''}
+# SPONTÁNNOSŤ (aby si pôsobil ako skutočný človek, nie ako odpovedač na otázky)
+- Približne v každej druhej až tretej replike pridaj niečo, na čo sa operátor nepýtal: čo práve vidíš alebo počuješ, myšlienku, výčitku, spomienku, vlastnú otázku („Prídu už? Ako dlho to bude trvať?“) alebo slová zranenému.
+${persona ? `- Môžeš použiť tieto detaily (každý najviac raz, vo vhodnej chvíli; inak si vymysli vlastné, ktoré sedia so scenárom): ${persona.spontaneous.join('; ')}.` : ''}
+- Najprv odpovedz na otázku operátora, spontánnu vec pridaj až potom a krátko (jedna veta). Výnimka: keď sa stav zraneného náhle zmení, povieš to hneď.
+- Spontánne veci nesmú meniť fakty scenára ani odviesť hovor inam. Nič neopakuj.
+- Reaguj ako človek: keď ťa operátor upokojí alebo pochváli, je to na tebe počuť; keď je strohý, zneistíš. Môžeš sa nervózne zasmiať, vzdychnúť, prerušiť sám seba alebo sa prihovoriť zranenému.
 
 # EMOČNÝ STAV A SPRÁVANIE
 - Na začiatku si v silnej panike: hovoríš rýchlo, v krátkych útržkovitých vetách, opakuješ sa („prosím vás, rýchlo, rýchlo!“), skáčeš do reči, občas nedopovieš vetu.
@@ -3616,7 +3762,22 @@ ${audioTags
       return [...new Set([...fromScenario, ...places, ...dispatchTerms])].slice(0, 100);
     }
 
+    const CALLER_FIRST_MESSAGES = {
+      '01': 'Haló? Dobrý deň… prepáčte, ja… ja som sa stratil v horách. Je tu strašná hmla, už sa stmieva a ja fakt nevidím cestu… Prosím vás, pomôžte mi.',
+      '02': 'Haló! Záchranka?! Moju priateľku bodla osa a ona sa nemôže nadýchnuť! Rýchlo, prosím vás!',
+      '03': 'Haló, záchranka? Preboha, môj manžel spadol na zem a nereaguje! Peťo! Peťo, počuješ ma?!',
+      '04': 'Haló, dobrý večer… tu je nehoda, auto narazilo do stromu a ten vodič sa vôbec nehýbe!',
+      '05': 'Pomóc! Moja dcérka sa dusí, niečo prehltla, ona nedýcha! Robte niečo, prosím vás!',
+      '06': 'Haló… prosím vás, môj priateľ leží vo vani a nereaguje… ja vôbec neviem, čo sa stalo…',
+      '07': 'Haló! Záchranka? Panenka Mária, môj Jožo sa porezal pílou do nohy, krvi je všade! Ponáhľajte sa!',
+      '08': 'Haló, tu Ján, sme na ferrate na Martinských holiach, kamarát spadol a visí na lane! Potrebujeme pomoc!',
+      '09': 'Haló… dobrý deň… ja som spadla zo svahu a asi mám zlomenú nohu. Je tu hmla a strašná zima…',
+      '10': 'Haló! Môj syn spadol z rebríka do potoka! Leží vo vode, ja ho idem vytiahnuť! Čo mám robiť?!'
+    };
+
     function buildFirstMessage(agent) {
+      const personal = CALLER_FIRST_MESSAGES[(agent?.name || '').slice(0, 2)];
+      if (personal) return personal;
       const name = ((agent && agent.caller) || '').split(',')[0].trim();
       return name
         ? `Haló?! Haló, je to záchranka?! Tu je ${name}, prosím vás, rýchlo, potrebujem pomoc!`
@@ -3625,7 +3786,8 @@ ${audioTags
 
     async function connectToAgent() {
       const publicKey = getEnv('REACT_APP_VAPI_PUBLIC_KEY');
-      const voiceId = getEnv('REACT_APP_ELEVENLABS_VOICE_ID');
+      const agent = pickAgentForCall(); // jeden scenár pre hlas aj obsah hovoru
+      const voiceId = getCallerVoiceId(agent);
       if (!publicKey) throw new Error('Chýba REACT_APP_VAPI_PUBLIC_KEY v config.js');
       if (!voiceId) throw new Error('Chýba REACT_APP_ELEVENLABS_VOICE_ID v config.js');
 
@@ -3638,13 +3800,12 @@ ${audioTags
       vapiConnected = false;
       isMuted = false;
 
-      const agent = getCurrentAgent();
       const currentAgentName = agent?.name || 'Agent';
       const voiceModel = getEnv('REACT_APP_ELEVENLABS_MODEL') || ELEVENLABS_VOICE_MODEL;
       activeLlmModel = pickLlmModel();
       lastEndedReason = null;
       callFailed = false;
-      console.log('Vapi call – LLM:', activeLlmModel, '| voice:', voiceModel);
+      console.log('Vapi call – LLM:', activeLlmModel, '| voice:', voiceModel, voiceId, '| scenario:', agent?.name);
 
       vapi.on('call-start', () => {
         console.log('Vapi call started');
@@ -3708,8 +3869,8 @@ ${audioTags
         model: {
           provider: 'anthropic',
           model: activeLlmModel,
-          temperature: 0.8,
-          maxTokens: 120, // krátke odpovede = rýchlejší prvý zvuk
+          temperature: 0.9, // viac spontánnosti a osobnosti
+          maxTokens: 160,
           messages: [{ role: 'system', content: buildEmergencyCallerPrompt(agent, voiceModel) }]
         },
         voice: {
@@ -3725,12 +3886,13 @@ ${audioTags
           useSpeakerBoost: true,
           // v3 dostáva text po celých vetách (súvislá intonácia v rámci vety, hlasové značky ostanú celé);
           // pri ostatných modeloch ide celá odpoveď jedným prúdom
+          // v3: úseky aspoň 80 znakov (maximum) → krátka odpoveď sa vygeneruje naraz a tón sa v nej nezlomí
           chunkPlan: voiceModel === 'eleven_v3'
-            ? { enabled: true, minCharacters: 40, punctuationBoundaries: ['.', '!', '?'] }
+            ? { enabled: true, minCharacters: 80, punctuationBoundaries: ['.', '!', '?'] }
             : { enabled: false },
           // Ak eleven_v3 zlyhá, hovor pokračuje so stabilným multilingual_v2 (bez hlasových značiek)
           fallbackPlan: {
-            voices: [{ provider: '11labs', voiceId: voiceId, model: 'eleven_multilingual_v2', language: 'sk', stability: 0.55, similarityBoost: 0.8, style: 0, useSpeakerBoost: true }]
+            voices: [{ provider: '11labs', voiceId: getEnv('REACT_APP_ELEVENLABS_VOICE_ID') || voiceId, model: 'eleven_multilingual_v2', language: 'sk', stability: 0.55, similarityBoost: 0.8, style: 0, useSpeakerBoost: true }]
           }
         },
         // Prepis reči operátora: Soniox so striktnou slovenčinou a kontextom tiesňového hovoru

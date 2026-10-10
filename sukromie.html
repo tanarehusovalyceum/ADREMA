@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ochrana súkromia – ADREMA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet" />
+  <link href="site.css" rel="stylesheet" />
+  <style>
+    main.doc { justify-content: flex-start; align-items: stretch; max-width: 760px; padding-top: 8px; }
+    .doc h1 { font-size: clamp(28px, 5vw, 38px); font-weight: 900; letter-spacing: -0.02em; margin: 0 0 6px; }
+    .doc h2 { font-size: 18px; margin: 32px 0 8px; }
+    .doc p, .doc li { font-size: 15px; line-height: 1.65; color: var(--text); }
+    .doc .muted { color: var(--muted); font-size: 13px; }
+    .doc ul { padding-left: 20px; margin: 8px 0; }
+    .doc a { color: var(--primary); }
+    .table-wrap { overflow-x: auto; margin: 12px 0; }
+    table { border-collapse: collapse; width: 100%; font-size: 14px; }
+    th, td { text-align: left; vertical-align: top; padding: 10px 12px; border-bottom: 1px solid var(--border); }
+    th { font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
+  </style>
+  <script>
+    try {
+      const theme = localStorage.getItem('theme');
+      if (theme === 'dark') document.documentElement.classList.add('dark');
+      if (theme === 'light') document.documentElement.classList.add('light');
+    } catch (e) { }
+  </script>
+</head>
+<body>
+  <header><a class="logo" href="index.html">ADREMA</a></header>
+
+  <main class="doc">
+    <h1>Ochrana súkromia a cookies</h1>
+    <p class="muted">Posledná aktualizácia: 10. 10. 2026</p>
+
+    <h2>Kto zodpovedá za spracúvanie</h2>
+    <p>Prevádzkovateľ simulátora ADREMA: <strong>Tatiana Rehúšová</strong>,
+      kontakt: <a href="mailto:adremateam@gmail.com">adremateam@gmail.com</a>.</p>
+
+    <h2>Cookies</h2>
+    <p>ADREMA <strong>nepoužíva reklamné, analytické ani sledovacie cookies</strong>. Preto od vás nepotrebujeme súhlas s cookies.</p>
+
+    <h2>Čo sa ukladá vo vašom prehliadači</h2>
+    <p>Simulátor ukladá údaje len v úložisku vášho prehliadača (localStorage) na tomto zariadení. Na náš server ich neposielame.
+      Sú nevyhnutné na to, aby simulátor fungoval:</p>
+    <ul>
+      <li>používateľské meno a stav prihlásenia,</li>
+      <li>história hovorov – prepisy, skóre a spätná väzba k vašim hovorom,</li>
+      <li>nastavenia (jazyk, svetlý/tmavý motív, výber scenárov, režim lokalizácie),</li>
+      <li>spätná väzba odoslaná cez formulár a informácia, že ste videli túto lištu.</li>
+    </ul>
+    <p>Údaje vymažete vymazaním údajov stránky v prehliadači (Nastavenia → Súkromie → Údaje stránok) alebo odhlásením a vymazaním histórie.</p>
+
+    <h2>Hlasový hovor so simulovaným volajúcim</h2>
+    <p>Počas hovoru sa zvuk z vášho mikrofónu prenáša do služby <strong>Vapi</strong> (prenos cez WebRTC – Daily), ktorá ho spracúva pomocou ďalších poskytovateľov:</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Poskytovateľ</th><th>Na čo</th><th>Aké údaje</th></tr></thead>
+        <tbody>
+          <tr><td>Vapi, Daily</td><td>prenos a riadenie hovoru</td><td>váš hlas, technické údaje o spojení, IP adresa</td></tr>
+          <tr><td>Soniox / Microsoft Azure</td><td>prepis reči na text</td><td>váš hlas</td></tr>
+          <tr><td>Anthropic (Claude)</td><td>odpovede simulovaného volajúceho</td><td>prepis toho, čo hovoríte</td></tr>
+          <tr><td>ElevenLabs</td><td>hlas simulovaného volajúceho</td><td>text odpovedí volajúceho (nie váš hlas)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p><strong>Nahrávky a prepisy hovorov</strong> sa ukladajú v účte prevádzkovateľa v službe Vapi. Slúžia na kontrolu kvality
+      simulátora a riešenie technických problémov. Ich vymazanie si môžete vyžiadať na kontakte uvedenom vyššie.</p>
+    <p>Hovor sa začne až po kliknutí na „Začať tiesňový hovor“ a po vašom povolení mikrofónu v prehliadači.
+      Počas hovoru nehovorte skutočné osobné údaje – ide o tréningovú simuláciu.</p>
+    <p class="muted">Ak je zapnuté AI hodnotenie hovoru, prepis hovoru sa po jeho skončení pošle aj službe Groq na vyhodnotenie.</p>
+
+    <h2>Mapa a vyhľadávanie adries</h2>
+    <p>Mapové podklady načítavame zo služieb Esri ArcGIS, OpenStreetMap a OpenTopoMap. Pri vyhľadaní adresy sa zadaný text
+      pošle službe OpenStreetMap Nominatim. Tieto služby pri tom vidia vašu IP adresu.</p>
+
+    <h2>Načítanie stránky</h2>
+    <p>Pri načítaní stránky sa časti kódu a písma sťahujú z verejných CDN (jsDelivr, unpkg, cdnjs, Tailwind CDN, Google Fonts)
+      a stránku doručuje hosting (Vercel alebo GitHub Pages). Tieto služby spracúvajú vašu IP adresu a technické údaje
+      o prehliadači v bežných serverových záznamoch.</p>
+
+    <h2>Vaše práva</h2>
+    <p>Podľa GDPR máte právo na prístup k údajom, ich opravu, vymazanie, obmedzenie spracúvania, prenosnosť a právo namietať.
+      Obrátiť sa môžete na kontakt uvedený vyššie alebo podať sťažnosť na
+      <a href="https://dataprotection.gov.sk" rel="noopener">Úrad na ochranu osobných údajov SR</a>.</p>
+
+    <p style="margin-top:32px"><a class="btn secondary" href="index.html">Späť na úvod</a></p>
+  </main>
+
+  <footer>ADREMA · Adaptive Rescue Management Simulator</footer>
+</body>
+</html>

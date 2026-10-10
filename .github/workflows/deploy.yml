@@ -26,6 +26,9 @@ jobs:
         env:
           VAPI_PUBLIC_KEY: ${{ secrets.VAPI_PUBLIC_KEY }}
           ELEVENLABS_VOICE_ID: ${{ secrets.ELEVENLABS_VOICE_ID }}
+          ELEVENLABS_VOICE_ID_FEMALE: ${{ secrets.ELEVENLABS_VOICE_ID_FEMALE }}
+          ELEVENLABS_VOICE_ID_MALE: ${{ secrets.ELEVENLABS_VOICE_ID_MALE }}
+          CALLER_VOICES: ${{ secrets.CALLER_VOICES }}
           VAPI_LLM_MODEL: ${{ secrets.VAPI_LLM_MODEL }}
           ELEVENLABS_MODEL: ${{ secrets.ELEVENLABS_MODEL }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
