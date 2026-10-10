@@ -4645,7 +4645,7 @@ ${audioTags
       basicInfo: {
         label: 'Základné informácie',
         items: [
-          { id: 'location', label: 'Presná poloha / adresa', critical: true, re: /\b(kde|adres|polo[hž]|miest[oe]|ulic|obec|mesto|dedin|okres|s[uú]radnic|gps|orienta[cč]n|bl[ií]zko|pri čom|where|location|address)/i, tip: 'Hneď na začiatku zisti presnú polohu (obec, ulica, číslo, orientačné body). Bez polohy nemôže ísť pomoc.' },
+          { id: 'location', label: 'Presná poloha / adresa', critical: true, re: /\b(kde|adres|polo[hž]|lok[aá]ci|lokalit|miest[oe]|ulic|obec|mesto|dedin|okres|s[uú]radnic|gps|orienta[cč]n|bl[ií]zko|pri čom|where|location|address)/i, tip: 'Hneď na začiatku zisti presnú polohu (obec, ulica, číslo, orientačné body). Bez polohy nemôže ísť pomoc.' },
           { id: 'what', label: 'Čo sa stalo', re: /(čo sa (stalo|deje|presne)|čo je s|povedzte mi.*(stalo|deje)|what happened|what'?s going on)/i, tip: 'Otvor hovor otázkou „Čo sa presne stalo?“ – rýchlo pochopíš typ udalosti.' },
           { id: 'time', label: 'Kedy sa to stalo', re: /(kedy|ako dlho|pred (koľk|ako)|odkedy|how long|when)/i, tip: 'Opýtaj sa, kedy sa udalosť stala – čas je dôležitý pre posádku aj pre stav pacienta.' },
           { id: 'mechanism', label: 'Mechanizmus úrazu', re: /(ako sa to stalo|ako (spadol|spadla|sa zranil)|z akej výšky|čím sa|do čoho|how did)/i, tip: 'Zisti mechanizmus (pád z výšky, náraz, porezanie) – určuje závažnosť zranení.' }
@@ -4698,14 +4698,37 @@ ${audioTags
     function getSpecificChecks(incidentType, agent) {
       const ctx = ((incidentType || '') + ' ' + (agent?.scenario || '') + ' ' + (agent?.injury || '') + ' ' + (agent?.name || '')).toLowerCase();
       if (/\bco\b|oxid|plyn|k[uú]peľ|otrav|poison|gas/.test(ctx)) return {
-        label: 'Otrava CO / plyn', items: [
+        label: 'Otrava CO / plyn', skip: ['bleeding', 'mobility'], items: [
           { id: 'ventilate', label: 'Vyvetranie / odchod z priestoru', re: /(vyvetr|otvorte okn|von z|od[ií]d|opustite|ventil|get out)/i, tip: 'Pri podozrení na CO prikáž vyvetrať a dostať sa (aj pacienta) na čerstvý vzduch.' },
           { id: 'symptoms', label: 'Príznaky u volajúceho', re: /(boles[tť] hlavy|z[aá]vrat|nevoľn|je v[aá]m zle|c[ií]tite sa|dizzy|headache)/i, tip: 'Over príznaky aj u volajúceho – CO ohrozuje aj jeho.' },
           { id: 'source', label: 'Zdroj (karma, kotol, plyn)', re: /(karm|kotol|plyn|ohrievač|kachl|heater|boiler)/i, tip: 'Zisti zdroj (karma, kotol) a či je vypnutý.' }
         ]
       };
+      if (/anafyl|bodla|bodnut|\bos[aou]\b|alerg/.test(ctx)) return {
+        label: 'Alergická reakcia (anafylaxia)', skip: ['bleeding', 'mobility'], items: [
+          { id: 'allergyKnown', label: 'Známa alergia', re: /(alerg|pero|epipen|adrenal)/i, tip: 'Opýtajte sa, či je pacient alergický a či má pri sebe adrenalínové pero.' },
+          { id: 'epipen', label: 'Adrenalínové pero', re: /(pero|epipen|adrenal|injekci|pichnite|pichnúť)/i, tip: 'Ak má pacient adrenalínové pero (EpiPen), naviguj jeho podanie do stehna.' },
+          { id: 'position', label: 'Poloha pacienta', re: /(posaďte|posadiť|sed|polosed|nech sedí|ležať|nohy hore|nevstávať|neklaďte)/i, tip: 'Pri dýchacích ťažkostiach nech pacient sedí (polosed), pri šoku leží s nohami hore.' },
+          { id: 'watchBreathing', label: 'Sledovanie dýchania', re: /(sledujte|sledovať|ak (prestane|nebude) dýchať|dýcha stále|kontrolujte dýchanie|hovorte mi, ak)/i, tip: 'Povedz volajúcemu, nech sleduje dýchanie a ozve sa hneď, keď sa zhorší – pripravte sa na KPR.' }
+        ]
+      };
+      if (/zástav|kolaps|agonál|srd(ce|ca)/.test(ctx)) return {
+        label: 'Zástava srdca (TANR)', skip: ['bleeding', 'mobility'], items: [
+          { id: 'normalBreathing', label: 'Dýcha normálne?', re: /(normálne|normalne|pravidelne|chrčí|lapá)/i, tip: 'Overte, či dýcha NORMÁLNE – lapavé (agonálne) dýchanie je znak zástavy srdca.' },
+          { id: 'cprStart', label: 'Začatie KPR', re: /(masáž srdca|kpr|resuscit|stláčajte|stlačte (stred )?hrudn|tlačte (na )?hrudn|stred hrudníka)/i, tip: 'Pri zástave hneď navigujte KPR: dlane do stredu hrudníka, tlačiť silno 5–6 cm.' },
+          { id: 'cprRate', label: 'Tempo a hĺbka stlačení', re: /(100|120|rýchlo a silno|päť centimetr|5 centimetr|počítajte|raz, dva|do rytmu)/i, tip: 'Udávajte tempo 100–120 za minútu (počítajte nahlas) a hĺbku 5–6 cm.' },
+          { id: 'aed', label: 'Defibrilátor (AED)', re: /(defibril|aed)/i, tip: 'Opýtajte sa, či je v blízkosti defibrilátor (AED), a pošlite poň niekoho.' }
+        ]
+      };
+      if (/(stratený|stratená|stratil sa|stratila sa|zablúd|lost in)/.test(ctx) && !/pád|spadol|spadla|zlomen/.test(ctx)) return {
+        label: 'Stratená osoba', skip: ['bleeding', 'mobility'], items: [
+          { id: 'battery', label: 'Batéria telefónu', re: /(batéri|bateri|percent|nabit|šetrite|vypnite)/i, tip: 'Zistite stav batérie a poraďte, ako šetriť telefón (jas, nepotrebné aplikácie).' },
+          { id: 'stay', label: 'Zostať na mieste', re: /(zostaňte|ostaňte|nehýbte sa z miesta|nechoďte|čakajte (tam|na mieste))/i, tip: 'Povedzte strateného turistu, nech zostane na mieste – pohyb v hmle zhoršuje hľadanie.' },
+          { id: 'warmthLost', label: 'Teplo a ochrana', re: /(teplo|oblečte|bunda|deka|izola|prikry|zohrej)/i, tip: 'Poraďte, ako sa chrániť pred chladom (vrstvy, sedieť na batohu, kryť sa pred vetrom).' }
+        ]
+      };
       if (/duse|dus[ií]|lego|choking/.test(ctx)) return {
-        label: 'Dusenie', items: [
+        label: 'Dusenie', skip: ['bleeding', 'mobility'], items: [
           { id: 'cough', label: 'Kašle / dýcha', re: /(ka[sš]le|ka[sš]e[lľ]|d[ýy]cha|cough)/i, tip: 'Over, či dieťa účinne kašle – rozhoduje o ďalšom postupe.' },
           { id: 'backblows', label: 'Údery medzi lopatky', re: /(úder|udri|lopatk|chrbt|back blow)/i, tip: 'Naviguj 5 úderov medzi lopatky.' },
           { id: 'heimlich', label: 'Heimlichov manéver / stlačenia', re: /(heimlich|brucho|stla[cč]en|hrudn|thrust)/i, tip: 'Ak údery nepomôžu, naviguj stlačenia brucha (u malých detí hrudníka).' }
@@ -4763,16 +4786,34 @@ ${audioTags
       hazards: { ans: /(dym|horí|tečie|benzín|smrdí|iskr)/i, general: 'situation' },
       symptoms: { ans: /(bolí (ma )?hlava|točí sa mi|je mi zle|nevoľn|zvracia)/i, general: 'condition' },
       source: { ans: /(karm|kotol|plyn|ohrievač|kachl)/i, general: 'situation' },
-      cough: { ans: /(kašle|kašeľ|nekašle|dýcha|nedýcha)/i, general: 'condition' }
+      cough: { ans: /(kašle|kašeľ|nekašle|dýcha|nedýcha)/i, general: 'condition' },
+      allergyKnown: { ans: /alerg/i, general: 'condition' },
+      epipen: { ans: /(pero|epipen|adrenal)/i, general: 'condition' },
+      normalBreathing: { ans: /(chrčí|lapá|nedýcha normálne|divne dýcha|čudne dýcha|dýcha divne|dýcha čudne|tak čudne)/i, general: 'condition' },
+      battery: { ans: /(percent|batéri|vybíja)/i, general: 'situation' }
     };
     // Všeobecné otázky, ktoré otvárajú tému (volajúci potom informáciu povie sám)
     const GENERAL_QUESTIONS = {
       condition: /(ako (je )?na tom|v akom (je )?stave|aký (má |je )?(jeho |jej )?stav|zdravotn|kondíci|čo (mu|jej) je|ako sa (cíti|má)|je (v poriadku|ok)|čo (vidíte|robí) (na ňom|na nej|teraz)|opíšte (mi )?(jeho|jej|ho|ju))/i,
       situation: /(čo sa (stalo|deje)|povedzte mi (viac|všetko|čo)|opíšte|popíšte|čo vidíte|aká je situácia|ako to tam vyzerá)/i
     };
+    // Prepis reči často vynecháva diakritiku („dycha“, „krvaca“) – porovnávame aj bez nej
+    function stripDiacritics(t) { return String(t || '').normalize('NFD').replace(/[\u0300-\u036f]/g, ''); }
+    const _plainReCache = new Map();
+    function matchesText(re, text) {
+      if (re.test(text)) return true;
+      let plain = _plainReCache.get(re);
+      if (!plain) { plain = new RegExp(stripDiacritics(re.source), re.flags.replace('g', '')); _plainReCache.set(re, plain); }
+      return plain.test(stripDiacritics(text));
+    }
+    // Otázka dispečera (aj bez otáznika – prepis ho často nedá)
+    const QUESTION_RE = /(\?|^\s*(kde|kedy|co|čo|ako|kolko|koľko|kto|aky|aký|aka|aká|ake|aké|preco|prečo|je|ma|má|mate|máte|moze|môže|vie|citi|cíti|dycha|dýcha|reaguje|krvaca|krváca|bolí|boli|hýbe|hybe|povedzte|opíšte|opiste)\s)/i;
+
     const ITEM_STATUS = {
       asked: { credit: 1, label: 'riešené priamo (otázkou alebo pokynom)' },
-      general: { credit: 1, label: 'zistené všeobecnou otázkou' },
+      general: { credit: 1, label: 'zistené z rozhovoru (otázka a odpoveď volajúceho)' },
+      map: { credit: 1, label: 'poloha potvrdená na mape' },
+      na: { credit: null, label: 'netýka sa tohto scenára – nezapočítava sa' },
       volunteered: { credit: 0.75, label: 'povedal volajúci sám – odporúčame overiť otázkou' },
       generalOnly: { credit: 0.5, label: 'len všeobecná otázka – konkrétna odpoveď neodznela' },
       missing: { credit: 0, label: 'nezistené' }
@@ -4789,27 +4830,30 @@ ${audioTags
       // Poloha: volajúci spomenie miesto zo scenára alebo typický opis polohy
       const locationWords = String(agent?.location || '').split(/[\s,.;:()–\-]+/).filter(w => w.length > 3).map(w => w.toLowerCase());
       const locationAns = (text) => {
-        const t = text.toLowerCase();
-        return locationWords.some(w => t.includes(w)) || /(ulic|číslo domu|obec|sme (na|pri|v|pod|nad)|som (na|pri|v|pod|nad)|pri (ceste|lese|kríži|potoku)|značk|chodník|chata|parkovisk|rázcest)/i.test(text);
+        const t = stripDiacritics(text).toLowerCase();
+        return locationWords.some(w => t.includes(stripDiacritics(w))) || matchesText(/(ulic|číslo domu|obec|sme (na|pri|v|pod|nad)|som (na|pri|v|pod|nad)|pri (ceste|lese|kríži|potoku)|značk|chodník|chata|parkovisk|rázcest)/i, text);
       };
+      const isQuestion = (m) => matchesText(QUESTION_RE, m.text) || Object.values(GENERAL_QUESTIONS).some(re => matchesText(re, m.text));
 
       const evaluateItem = (item) => {
-        const asked = operatorMsgs.find(m => item.re.test(m.text));
+        const asked = operatorMsgs.find(m => matchesText(item.re, m.text));
         if (asked) return { status: 'asked', t: typeof asked.t === 'number' ? asked.t : null };
-        const ev = item.id === 'location' ? { test: locationAns, general: 'situation' } : (ITEM_EVIDENCE[item.id] ? { test: (x) => ITEM_EVIDENCE[item.id].ans.test(x), general: ITEM_EVIDENCE[item.id].general } : null);
+        // Poloha potvrdená na mape (AML alebo vyhľadanie) = poloha zistená
+        if (item.id === 'location' && location && location.pin) return { status: 'map', t: typeof location.pin.t === 'number' ? location.pin.t : null };
+        const ev = item.id === 'location' ? { test: locationAns, general: 'situation' }
+          : (ITEM_EVIDENCE[item.id] ? { test: (x) => matchesText(ITEM_EVIDENCE[item.id].ans, x), general: ITEM_EVIDENCE[item.id].general } : null);
         if (!ev) return { status: 'missing', t: null };
         const generalRe = ev.general ? GENERAL_QUESTIONS[ev.general] : null;
-        // všeobecná otázka a po nej odpoveď volajúceho s touto informáciou
-        if (generalRe) {
-          for (let i = 0; i < msgs.length; i++) {
-            if (!isOperatorRole(msgs[i].role) || !generalRe.test(msgs[i].text)) continue;
-            const answer = msgs.slice(i + 1).find(m => !isOperatorRole(m.role) && ev.test(m.text));
-            if (answer) return { status: 'general', t: typeof msgs[i].t === 'number' ? msgs[i].t : null };
-          }
+        // Volajúci informáciu povedal ako odpoveď na otázku dispečera (všeobecnú aj konkrétnu) = zistené
+        for (let i = 0; i < msgs.length; i++) {
+          if (isOperatorRole(msgs[i].role) || !ev.test(msgs[i].text)) continue;
+          let j = i - 1;
+          while (j >= 0 && !isOperatorRole(msgs[j].role)) j--;
+          if (j >= 0 && isQuestion(msgs[j])) return { status: 'general', t: typeof msgs[j].t === 'number' ? msgs[j].t : null };
         }
         const volunteered = callerMsgs.find(m => ev.test(m.text));
         if (volunteered) return { status: 'volunteered', t: typeof volunteered.t === 'number' ? volunteered.t : null };
-        if (generalRe && operatorMsgs.some(m => generalRe.test(m.text))) return { status: 'generalOnly', t: null };
+        if (generalRe && operatorMsgs.some(m => matchesText(generalRe, m.text))) return { status: 'generalOnly', t: null };
         return { status: 'missing', t: null };
       };
 
@@ -4837,20 +4881,24 @@ ${audioTags
         categoryWeights.guidance += remaining * 0.15;
       }
 
+      const skipIds = new Set((specific && specific.skip) || []);
       const results = {};
-      let protocolExact = 0;
       Object.entries(categories).forEach(([key, cat]) => {
         const items = cat.items.map(item => {
-          const r = evaluateItem(item);
+          const r = skipIds.has(item.id) ? { status: 'na', t: null } : evaluateItem(item);
           const st = ITEM_STATUS[r.status];
-          return { ...item, category: cat.label, status: r.status, statusLabel: st.label, credit: st.credit, found: st.credit >= 0.75, t: r.t };
+          return { ...item, category: cat.label, status: r.status, statusLabel: st.label, credit: st.credit, found: st.credit === null || st.credit >= 0.75, t: r.t };
         });
-        const ratio = items.length ? items.reduce((s, i) => s + i.credit, 0) / items.length : 1;
-        results[key] = { label: cat.label, score: Math.round(ratio * 100), items, weight: categoryWeights[key] || 0 };
-        protocolExact += ratio * 100 * (categoryWeights[key] || 0);
+        const counted = items.filter(i => i.credit !== null);
+        const ratio = counted.length ? counted.reduce((s, i) => s + i.credit, 0) / counted.length : null;
+        results[key] = { label: cat.label, score: ratio === null ? null : Math.round(ratio * 100), ratio, items, weight: categoryWeights[key] || 0 };
       });
-      const protocolScore = Math.round(protocolExact);
-      const allItems = Object.values(results).flatMap(c => c.items);
+      // Váhy prepočítame len na kategórie, ktoré sa scenára týkajú
+      const activeWeight = Object.values(results).filter(c => c.ratio !== null).reduce((s, c) => s + c.weight, 0) || 1;
+      Object.values(results).forEach(c => { c.weight = c.ratio === null ? 0 : c.weight / activeWeight; });
+      const protocolScore = Math.round(Object.values(results).reduce((s, c) => s + (c.ratio === null ? 0 : c.ratio * 100 * c.weight), 0));
+      const allItems = Object.values(results).flatMap(c => c.items).filter(i => i.credit !== null);
+      const naItems = Object.values(results).flatMap(c => c.items).filter(i => i.credit === null);
 
       // Kritické chyby – každá znamená penalizáciu 8 bodov (s uvedeným dôvodom)
       const PENALTY = 8;
@@ -4898,7 +4946,7 @@ ${audioTags
         duration: callDuration || 0,
         operatorTurns: operatorMsgs.length,
         callerTurns: callerMsgs.length,
-        questions: operatorMsgs.filter(m => /\?|^(kde|kedy|čo|ako|koľko|je|má|dýcha|reaguje)\s/i.test(m.text.trim())).length,
+        questions: operatorMsgs.filter(m => matchesText(QUESTION_RE, m.text.trim())).length,
         timeToLocation: loc && loc.status !== 'missing' && loc.status !== 'generalOnly' ? loc.t : null,
         timeToDispatch: disp?.t ?? null,
         timeToInstructions: instr?.t ?? null
@@ -4916,10 +4964,10 @@ ${audioTags
       }
 
       const strengths = [...locStrengths];
-      Object.values(results).forEach(c => { if (c.score >= 80) strengths.push(`${c.label}: zvládnuté (${c.score} %)`); });
+      Object.values(results).forEach(c => { if (c.score !== null && c.score >= 80) strengths.push(`${c.label}: zvládnuté (${c.score} %)`); });
       if (metrics.timeToLocation !== null && metrics.timeToLocation <= 30) strengths.push('Rýchle zistenie polohy');
       const generalWins = allItems.filter(i => i.status === 'general');
-      if (generalWins.length >= 2) strengths.push(`Všeobecnými otázkami ste zistili viac informácií naraz (${generalWins.map(i => i.label.toLowerCase()).join(', ')})`);
+      if (generalWins.length >= 2) strengths.push(`Otázkami ste od volajúceho zistili: ${generalWins.map(i => i.label.toLowerCase()).join(', ')}`);
 
       // Odporúčania: najprv chýbajúce kritické, potom ostatné chýbajúce, potom čiastočné
       const tipFor = (i) => i.status === 'volunteered' ? `${i.label}: volajúci to povedal sám – overte to aj priamou otázkou.`
@@ -4936,13 +4984,13 @@ ${audioTags
       else summary = 'Protokol nebol dodržaný v dostatočnej miere. Pred ďalším hovorom si prejdite kritické chyby a odporúčania.';
 
       return {
-        version: 2,
+        version: 4,
         source: 'local',
         score,
         summary,
         breakdown: { protocolScore, penalties, penaltyTotal, final: score },
-        categories: Object.fromEntries(Object.entries(results).map(([k, c]) => [k, { label: c.label, score: c.score, weight: Math.round(c.weight * 100) }])),
-        items: allItems.map(i => ({ id: i.id, label: i.label, category: i.category, status: i.status, statusLabel: i.statusLabel, credit: i.credit, critical: !!i.critical })),
+        categories: Object.fromEntries(Object.entries(results).filter(([, c]) => c.score !== null).map(([k, c]) => [k, { label: c.label, score: c.score, weight: Math.round(c.weight * 100) }])),
+        items: [...allItems, ...naItems].map(i => ({ id: i.id, label: i.label, category: i.category, status: i.status, statusLabel: i.statusLabel, credit: i.credit, critical: !!i.critical })),
         completed: allItems.filter(i => i.credit === 1).map(i => i.label),
         partial: allItems.filter(i => i.credit > 0 && i.credit < 1).map(i => i.label),
         missing: allItems.filter(i => i.credit === 0).map(i => i.label),
@@ -5143,6 +5191,8 @@ Vráť IBA platný JSON (všetky texty po slovensky, oslovuj dispečera v 2. oso
       const STATUS_UI = {
         asked: { icon: 'check_circle', cls: 'text-green-600 dark:text-green-400' },
         general: { icon: 'check_circle', cls: 'text-green-600 dark:text-green-400' },
+        map: { icon: 'check_circle', cls: 'text-green-600 dark:text-green-400' },
+        na: { icon: 'remove_circle', cls: 'text-on-surface-variant opacity-60' },
         volunteered: { icon: 'contrast', cls: 'text-amber-600 dark:text-amber-400' },
         generalOnly: { icon: 'contrast', cls: 'text-amber-600 dark:text-amber-400' },
         missing: { icon: 'cancel', cls: 'text-error' }
@@ -5153,9 +5203,10 @@ Vráť IBA platný JSON (všetky texty po slovensky, oslovuj dispečera v 2. oso
         <div class="mt-5 pt-4 border-t border-outline-variant/20">
           <p class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant mb-1">Body protokolu</p>
           <p class="text-[10px] text-on-surface-variant mb-3">
-            <span class="text-green-600 dark:text-green-400 font-bold">✓ 100 %</span> zistené (priamo alebo všeobecnou otázkou) ·
+            <span class="text-green-600 dark:text-green-400 font-bold">✓ 100 %</span> zistené (otázkou, z odpovede volajúceho alebo na mape) ·
             <span class="text-amber-600 dark:text-amber-400 font-bold">◐ 75 / 50 %</span> čiastočne ·
-            <span class="text-error font-bold">✗ 0 %</span> nezistené</p>
+            <span class="text-error font-bold">✗ 0 %</span> nezistené ·
+            <span class="font-bold">—</span> netýka sa scenára (nezapočítava sa)</p>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
             ${Object.entries(itemsByCat).map(([cat, items]) => `
             <div>
@@ -5165,7 +5216,7 @@ Vráť IBA platný JSON (všetky texty po slovensky, oslovuj dispečera v 2. oso
                   <span class="material-symbols-outlined text-sm ${STATUS_UI[i.status]?.cls || ''}" style="font-variation-settings:'FILL' 1;">${STATUS_UI[i.status]?.icon || 'help'}</span>
                   <span class="flex-1"><span class="text-on-surface font-semibold">${escapeHtml(i.label)}</span>${i.critical ? ' <span class="text-[9px] font-bold text-error uppercase">kritické</span>' : ''}
                     <span class="block text-on-surface-variant">${escapeHtml(i.statusLabel)}</span></span>
-                  <span class="font-bold text-on-surface-variant whitespace-nowrap">${Math.round(i.credit * 100)} %</span>
+                  <span class="font-bold text-on-surface-variant whitespace-nowrap">${i.credit === null ? '—' : Math.round(i.credit * 100) + ' %'}</span>
                 </li>`).join('')}</ul>
             </div>`).join('')}
           </div>
@@ -5239,7 +5290,7 @@ Vráť IBA platný JSON (všetky texty po slovensky, oslovuj dispečera v 2. oso
     function ensureSessionFeedback(session) {
       if (!session) return false;
       // Staršie automatické hodnotenie (bez rozpisu bodov) prepočítame novou logikou
-      if (session.feedback && session.feedback.source === 'local' && !session.feedback.version && Array.isArray(session.transcript) && session.transcript.length) {
+      if (session.feedback && session.feedback.source === 'local' && (session.feedback.version || 0) < 4 && Array.isArray(session.transcript) && session.transcript.length) {
         const agent = session.scenario || findAgentForIncident(session.incidentType);
         const fb = evaluateProtocol(session.incidentType, session.transcript, agent, session.duration || 0, session.location || null);
         fb.backfilled = !!session.feedback.backfilled;
@@ -5905,6 +5956,26 @@ Vráť IBA platný JSON (všetky texty po slovensky, oslovuj dispečera v 2. oso
       return { bg: 'bg-error-container/30', border: 'border-error/20', icon: 'text-error', text: 'text-on-error-container', label: 'text-error' };
     }
 
+    // Zhrnutie v Aktívnych prípadoch – rovnaké body ako v karte spätnej väzby
+    function renderFeedbackSummary(fb) {
+      const items = (fb.items || []).filter(i => i.credit !== null);
+      const ok = items.filter(i => i.credit === 1), part = items.filter(i => i.credit > 0 && i.credit < 1), miss = items.filter(i => i.credit === 0);
+      const chip = (i, cls, icon) => `<span class="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-semibold border ${cls}" title="${escapeHtml(i.statusLabel)}"><span class="material-symbols-outlined text-sm" style="font-variation-settings:'FILL' 1;">${icon}</span>${escapeHtml(i.label)} · ${Math.round(i.credit * 100)} %</span>`;
+      return `
+    <div class="mb-3 flex flex-wrap items-center gap-2 text-[10px] font-bold">
+      <span class="px-2 py-0.5 rounded-full bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-700/50">${ok.length} zistených</span>
+      <span class="px-2 py-0.5 rounded-full bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-700/40">${part.length} čiastočne</span>
+      <span class="px-2 py-0.5 rounded-full bg-error-container/30 text-error border border-error/15">${miss.length} chýba</span>
+      ${fb.breakdown ? `<span class="text-on-surface-variant font-semibold">protokol ${fb.breakdown.protocolScore} % − penalizácie ${fb.breakdown.penaltyTotal} b. = ${fb.breakdown.final}/100</span>` : ''}
+    </div>
+    <div class="flex flex-wrap gap-1.5">
+      ${ok.map(i => chip(i, 'bg-green-50 dark:bg-green-900/30 text-green-800 dark:text-green-300 border-green-200 dark:border-green-700/50', 'check_circle')).join('')}
+      ${part.map(i => chip(i, 'bg-amber-50 dark:bg-amber-900/20 text-amber-800 dark:text-amber-300 border-amber-200 dark:border-amber-700/40', 'contrast')).join('')}
+      ${miss.map(i => chip(i, 'bg-error-container/30 text-on-error-container dark:text-red-300 border-error/20', 'cancel')).join('')}
+    </div>
+    <p class="mt-3 text-[11px] text-on-surface-variant italic border-t border-outline-variant/10 pt-3">${escapeHtml(fb.summary || '')}</p>`;
+    }
+
     function renderInsightCards(incidentType, transcript, accuracy) {
       const items = generateInsightCards(incidentType, transcript);
       const goodCount = items.filter(i => i.status === 'good').length;
@@ -6046,7 +6117,7 @@ Vráť IBA platný JSON (všetky texty po slovensky, oslovuj dispečera v 2. oso
           </div>
         </div>` : ''}
         ${s.llmAnalysis ? `<p class="text-[10px] text-on-surface-variant mt-3 italic">${s.llmAnalysis}</p>` : ''}
-        ` : renderInsightCards(s.incidentType, s.transcript, s.accuracy)}
+        ` : (s.feedback && s.feedback.items ? renderFeedbackSummary(s.feedback) : renderInsightCards(s.incidentType, s.transcript, s.accuracy))}
       </div>
       ${s.situationIntel ? `
       <div class="col-span-2 bg-surface-container-low rounded-lg p-5 border border-outline-variant/10">
