@@ -5355,6 +5355,19 @@ Vráť IBA platný JSON (všetky texty po slovensky, oslovuj dispečera v 2. oso
       return { entries, isAdmin };
     }
 
+    // Po načítaní stránky prepočítať staršie hovory novým hodnotením (aj pre Aktívne prípady, nielen Výsledky)
+    window.addEventListener('load', () => {
+      try {
+        let changed = false;
+        sessions.forEach(sess => { if (ensureSessionFeedback(sess)) changed = true; });
+        if (changed) {
+          saveSessions();
+          renderSessionList();
+          if (typeof currentSessionIndex !== 'undefined' && currentSessionIndex >= 0 && currentSessionIndex < sessions.length) updateDetailView(currentSessionIndex);
+        }
+      } catch (e) { console.error('Prepočet hodnotenia zlyhal:', e); }
+    });
+
     function setResultsFilter(filter) {
       resultsFilter = filter;
       resultsSelectedId = null;
