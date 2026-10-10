@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Podmienky používania – ADREMA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet" />
+  <link href="site.css" rel="stylesheet" />
+  <style>
+    main.doc { justify-content: flex-start; align-items: stretch; max-width: 760px; padding-top: 8px; }
+    .doc h1 { font-size: clamp(28px, 5vw, 38px); font-weight: 900; letter-spacing: -0.02em; margin: 0 0 6px; }
+    .doc h2 { font-size: 18px; margin: 32px 0 8px; }
+    .doc p, .doc li { font-size: 15px; line-height: 1.65; color: var(--text); }
+    .doc .muted { color: var(--muted); font-size: 13px; }
+    .doc ul { padding-left: 20px; margin: 8px 0; }
+    .doc a { color: var(--primary); }
+    .alert { border: 2px solid var(--accent); border-radius: 12px; padding: 14px 16px; margin: 16px 0 0; }
+  </style>
+  <script>
+    try {
+      const theme = localStorage.getItem('theme');
+      if (theme === 'dark') document.documentElement.classList.add('dark');
+      if (theme === 'light') document.documentElement.classList.add('light');
+    } catch (e) { }
+  </script>
+</head>
+<body>
+  <header><a class="logo" href="index.html">ADREMA</a></header>
+
+  <main class="doc">
+    <h1>Podmienky používania</h1>
+    <p class="muted">Posledná aktualizácia: 10. 10. 2026</p>
+
+    <p class="alert"><strong>ADREMA nie je skutočná tiesňová linka.</strong> V skutočnej núdzi volajte <strong>112</strong>.</p>
+
+    <h2>1. Čo je ADREMA</h2>
+    <p>ADREMA je vzdelávací simulátor na tréning príjmu tiesňových volaní. Prevádzkuje ho Tatiana Rehúšová
+      (kontakt: <a href="mailto:adremateam@gmail.com">adremateam@gmail.com</a>). Nejde o oficiálny produkt
+      Integrovaného záchranného systému, Horskej záchrannej služby ani Ministerstva vnútra SR.</p>
+
+    <h2>2. Umelá inteligencia</h2>
+    <ul>
+      <li>Volajúceho hrá umelá inteligencia. Jeho hlas je umelo vytvorený, nejde o skutočnú osobu.</li>
+      <li>Mená, príbehy a miesta v scenároch sú vymyslené. Akákoľvek podobnosť so skutočnými osobami alebo udalosťami je náhodná.</li>
+      <li>AI sa môže mýliť – jej odpovede ani rady prvej pomoci, ktoré v simulácii zaznejú, nie sú odborným zdravotníckym návodom.</li>
+    </ul>
+
+    <h2>3. Hodnotenie</h2>
+    <p>Skóre a spätná väzba po hovore sú vytvárané automaticky a majú <strong>orientačný charakter</strong>. Nie sú certifikáciou,
+      oficiálnym hodnotením ani náhradou certifikovaného školenia operátorov tiesňovej linky či kurzu prvej pomoci.</p>
+
+    <h2>4. Náročný obsah</h2>
+    <p>Scenáre zobrazujú vážne zranenia, ohrozenie detí a silné emócie. Ak je pre vás obsah nepríjemný, hovor kedykoľvek ukončite.</p>
+
+    <h2>5. Kto môže simulátor používať</h2>
+    <p>Simulátor je určený osobám starším ako 16 rokov. Mladší používatelia ho môžu používať len so súhlasom zákonného
+      zástupcu alebo v rámci výučby organizovanej školou.</p>
+
+    <h2>6. Zakázané použitie</h2>
+    <ul>
+      <li>vydávať nahrávky alebo prepisy zo simulátora za skutočné tiesňové volania,</li>
+      <li>zneužívať simulátor na obťažovanie, klamanie alebo šírenie nepravdivých informácií,</li>
+      <li>úmyselne preťažovať službu, obchádzať limity alebo zasahovať do jej fungovania,</li>
+      <li>počas hovoru uvádzať skutočné citlivé osobné údaje (vlastné alebo cudzie).</li>
+    </ul>
+
+    <h2>7. Zodpovednosť</h2>
+    <p>Simulátor sa poskytuje „tak, ako je“, bez záruky dostupnosti či bezchybnosti. Prevádzkovateľ nezodpovedá za škodu,
+      ktorá by vznikla použitím simulátora alebo spoliehaním sa na jeho obsah, v rozsahu, v akom to právne predpisy dovoľujú.</p>
+
+    <h2>8. Osobné údaje</h2>
+    <p>Spracúvanie osobných údajov popisuje stránka <a href="sukromie.html">Ochrana súkromia a cookies</a>.</p>
+
+    <h2>9. Zmeny a rozhodné právo</h2>
+    <p>Prevádzkovateľ môže tieto podmienky meniť; aktuálna verzia je vždy na tejto stránke. Riadia sa právom Slovenskej republiky.</p>
+
+    <p style="margin-top:32px"><a class="btn secondary" href="index.html">Späť na úvod</a></p>
+  </main>
+
+  <footer>ADREMA · Adaptive Rescue Management Simulator · <a href="sukromie.html" style="color:inherit">Ochrana súkromia</a></footer>
+</body>
+</html>

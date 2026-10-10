@@ -3394,6 +3394,8 @@
     // ─── FIX 1: Re-query DOM elements after showLandingPage() rebuilds the container ───
     async function startCall() {
       if (callStarted) return;
+      // Hovor až po potvrdení spodnej lišty (simulácia, AI volajúci, spracúvanie údajov, podmienky)
+      if (window.adremaRequireConsent && !window.adremaRequireConsent()) return;
 
       const userName = localStorage.getItem('adrema_user_name') || '';
       const demoLimits = { 'test1': 3, 'sample 1': 3, 'sample 2': 3, 'sample 3': 3, 'sample 4': 3, 'sample 5': 3, 'sample 6': 3, 'sample 7': 3, 'sample 8': 3, 'sample 9': 3, 'sample 10': 3, 'AIbuildweek': 2, 'a': 2 };
