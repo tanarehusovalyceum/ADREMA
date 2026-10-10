@@ -631,6 +631,7 @@
           <span class="text-primary font-bold tracking-wider uppercase text-[10px]">Tréning dispečerov 112</span>
           <h1 class="text-3xl font-black tracking-tight text-on-surface leading-tight">Výsledky hovorov a spätná väzba</h1>
           <p class="mt-1 text-sm text-on-surface-variant leading-normal">Všetky vykonané hovory s kompletným vyhodnotením – skóre, kritické chyby, silné stránky, odporúčania a prepis.</p>
+          <p id="app-version" class="mt-1 text-[10px] text-on-surface-variant opacity-70"></p>
         </div>
         <div class="flex flex-wrap items-center gap-2">
           <select id="results-user-select" class="hidden bg-surface-container-highest border-none rounded-lg py-2 pl-3 pr-8 text-xs font-semibold text-on-surface focus:ring-1 focus:ring-primary" onchange="resultsUser = this.value; resultsSelectedId = null; renderResultsView();"></select>
@@ -5278,6 +5279,38 @@ Vráť IBA platný JSON (všetky texty po slovensky, oslovuj dispečera v 2. oso
       </div>`;
     }
 
+    const APP_VERSION = '2026-10-10 · hodnotenie v4';
+
+    // Skopíruje uložený hovor (prepis + hodnotenie) – na diagnostiku, keď hodnotenie nesedí
+    function copyCallData(sessionId) {
+      const entry = loadResultsEntries().entries.find(e => e.session.id === sessionId);
+      if (!entry) return;
+      const s = entry.session;
+      const data = JSON.stringify({
+        appVersion: APP_VERSION,
+        page: location.host,
+        incidentType: s.incidentType, scenario: s.scenario || null, duration: s.duration, location: s.location || null,
+        accuracy: s.accuracy, feedbackVersion: s.feedback?.version || null, feedbackSource: s.feedback?.source || null,
+        breakdown: s.feedback?.breakdown || null,
+        items: (s.feedback?.items || []).map(i => `${i.label}: ${i.credit === null ? '—' : Math.round(i.credit * 100) + ' %'} (${i.statusLabel})`),
+        transcript: (s.transcript || []).map(m => `${m.role}${typeof m.t === 'number' ? ' [' + m.t + ' s]' : ''}: ${m.text}`)
+      }, null, 2);
+      const done = (ok) => {
+        const btn = document.getElementById('copy-call-btn');
+        if (btn) { btn.textContent = ok ? 'Skopírované ✓' : 'Označené – stlačte Cmd+C'; setTimeout(() => renderResultsView(), 2500); }
+      };
+      const fallback = () => {
+        const ta = document.createElement('textarea');
+        ta.value = data; ta.style.cssText = 'position:fixed;left:0;top:0;width:100%;height:50%;z-index:99999';
+        document.body.appendChild(ta); ta.focus(); ta.select();
+        let ok = false; try { ok = document.execCommand('copy'); } catch (e) { }
+        if (ok) ta.remove(); else setTimeout(() => ta.remove(), 20000);
+        done(ok);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(data).then(() => done(true), fallback);
+      else fallback();
+    }
+
     // ─── Záložka „Výsledky hovorov“ – história všetkých hovorov s kompletnou spätnou väzbou ───
     let resultsFilter = 'all', resultsSearch = '', resultsUser = null, resultsSelectedId = null, resultsChart = null;
 
@@ -5423,6 +5456,8 @@ Vráť IBA platný JSON (všetky texty po slovensky, oslovuj dispečera v 2. oso
         resultsKpi('verified', 'Úspešné hovory', n ? `${passed}/${n}` : '—', n ? Math.round(passed / n * 100) + ' % úspešnosť' : '') +
         resultsKpi('location_on', 'Priem. čas k polohe', avgLoc !== null ? formatSeconds(avgLoc) : '—', 'cieľ: do 30 s');
       document.getElementById('results-threshold').textContent = FAILURE_THRESHOLD + ' %';
+      const verEl = document.getElementById('app-version');
+      if (verEl) verEl.textContent = 'Verzia: ' + APP_VERSION;
 
       renderResultsChart(byUser.map(e => e.session).slice().reverse());
 
@@ -5556,6 +5591,7 @@ Vráť IBA platný JSON (všetky texty po slovensky, oslovuj dispečera v 2. oso
           </div>
           <div class="flex gap-2">
             ${canReevaluate ? `<button onclick="reevaluateResult(${Number(s.id)})" class="bg-surface-container-high hover:bg-surface-dim text-primary px-3 py-2 rounded-lg text-xs font-bold flex items-center gap-1.5"><span class="material-symbols-outlined text-base">auto_awesome</span>Vyhodnotiť AI</button>` : ''}
+            <button id="copy-call-btn" onclick="copyCallData(${Number(s.id)})" class="bg-surface-container-high hover:bg-surface-dim text-primary px-3 py-2 rounded-lg text-xs font-bold flex items-center gap-1.5"><span class="material-symbols-outlined text-base">content_copy</span>Kopírovať údaje hovoru</button>
             ${entry.own ? `<button onclick="openResultInHistory(${Number(s.id)})" class="bg-primary hover:bg-primary-container text-on-primary px-3 py-2 rounded-lg text-xs font-bold flex items-center gap-1.5"><span class="material-symbols-outlined text-base">open_in_new</span>Detail / PDF</button>` : ''}
           </div>
         </div>
