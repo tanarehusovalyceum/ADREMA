@@ -3824,6 +3824,7 @@ ${audioTags
         vapiConnected = true;
         globalCallStartTime = Date.now();
         currentSessionData = null; // nový hovor → po ukončení sa uloží a vyhodnotí
+        resetDispatchButton();
         agentBubble = null;
 
         const titleEl = document.getElementById('eleven-agent-title');
@@ -4144,7 +4145,24 @@ ${audioTags
     const mainDispatch = document.getElementById('main-dispatch');
     const mainHistory = document.getElementById('main-history');
 
+    // Vyslanie zásahu počas hovoru – zaznamená čas, hovor pokračuje a vyhodnotí sa celý až po ukončení.
+    // (Pôvodne sa hovor uložil a vyhodnotil hneď, často len s prvou vetou volajúceho → 0 bodov.)
+    let callDispatchedAt = null;
+    function resetDispatchButton() {
+      callDispatchedAt = null;
+      const label = document.getElementById('dispatch-btn-text');
+      if (label) label.textContent = t('dispatchBtn');
+      dispatchBtn.classList.remove('opacity-70');
+    }
     dispatchBtn.addEventListener('click', () => {
+      if (callStarted) {
+        if (callDispatchedAt === null) callDispatchedAt = globalCallStartTime ? Math.round((Date.now() - globalCallStartTime) / 1000) : 0;
+        const label = document.getElementById('dispatch-btn-text');
+        if (label) label.textContent = 'Zásah vyslaný ✓ (po ' + formatSeconds(callDispatchedAt) + ')';
+        dispatchBtn.classList.add('opacity-70');
+        elements.status.textContent = '🚁 Zásah vyslaný – pokračujte v hovore, vyhodnotí sa po jeho ukončení';
+        return;
+      }
       captureAndSaveSession();
       mainDispatch.classList.add('hidden');
       mainHistory.classList.remove('hidden');
@@ -4823,7 +4841,7 @@ ${audioTags
     // Hlavné lokálne vyhodnotenie – vychádza z pôvodných kategórií a váh computeProtocolRating.
     // Bod sa počíta podľa toho, či dispečer informáciu ZISTIL (priamo, všeobecnou otázkou alebo od volajúceho),
     // nielen podľa presného znenia otázky. Výsledok = protokol (vážený priemer) − penalizácie za kritické chyby.
-    function evaluateProtocol(incidentType, transcript, agent, callDuration, location) {
+    function evaluateProtocol(incidentType, transcript, agent, callDuration, location, actions) {
       const msgs = (transcript || []).filter(m => !isSystemRole(m.role));
       const operatorMsgs = msgs.filter(m => isOperatorRole(m.role));
       const callerMsgs = msgs.filter(m => !isOperatorRole(m.role));
@@ -4967,6 +4985,15 @@ ${audioTags
       const strengths = [...locStrengths];
       Object.values(results).forEach(c => { if (c.score !== null && c.score >= 80) strengths.push(`${c.label}: zvládnuté (${c.score} %)`); });
       if (metrics.timeToLocation !== null && metrics.timeToLocation <= 30) strengths.push('Rýchle zistenie polohy');
+      // Vyslanie zásahu tlačidlom (akcia dispečera, nie veta v hovore)
+      const dispatchedAt = actions && typeof actions.dispatchedAt === 'number' ? actions.dispatchedAt : null;
+      metrics.dispatchedAt = dispatchedAt;
+      const dispatchMistakes = [];
+      if (dispatchedAt !== null) {
+        strengths.push(`Zásah ste vyslali po ${formatSeconds(dispatchedAt)}${dispatchedAt <= 90 ? ' (do 90 s – výborne)' : ''}`);
+        if (dispatchedAt > 90) dispatchMistakes.push(`Zásah ste vyslali až po ${formatSeconds(dispatchedAt)} – cieľ je do 90 s.`);
+        if (disp && disp.credit < 0.75) dispatchMistakes.push('Zásah ste vyslali, ale volajúcemu ste nepovedali, že pomoc je na ceste – povedzte mu to, upokojí ho to.');
+      }
       const generalWins = allItems.filter(i => i.status === 'general');
       if (generalWins.length >= 2) strengths.push(`Otázkami ste od volajúceho zistili: ${generalWins.map(i => i.label.toLowerCase()).join(', ')}`);
 
@@ -4997,7 +5024,7 @@ ${audioTags
         missing: allItems.filter(i => i.credit === 0).map(i => i.label),
         criticalErrors,
         strengths,
-        mistakes: [...locMistakes, ...timing.filter(t => /až po/.test(t))],
+        mistakes: [...locMistakes, ...dispatchMistakes, ...timing.filter(t => /až po/.test(t))],
         recommendations,
         metrics
       };
@@ -5279,7 +5306,7 @@ Vráť IBA platný JSON (všetky texty po slovensky, oslovuj dispečera v 2. oso
       </div>`;
     }
 
-    const APP_VERSION = '2026-10-10 · hodnotenie v4';
+    const APP_VERSION = '2026-10-10 · hodnotenie v5';
 
     // Skopíruje uložený hovor (prepis + hodnotenie) – na diagnostiku, keď hodnotenie nesedí
     function copyCallData(sessionId) {
@@ -5325,7 +5352,7 @@ Vráť IBA platný JSON (všetky texty po slovensky, oslovuj dispečera v 2. oso
       // Staršie automatické hodnotenie (bez rozpisu bodov) prepočítame novou logikou
       if (session.feedback && session.feedback.source === 'local' && (session.feedback.version || 0) < 4 && Array.isArray(session.transcript) && session.transcript.length) {
         const agent = session.scenario || findAgentForIncident(session.incidentType);
-        const fb = evaluateProtocol(session.incidentType, session.transcript, agent, session.duration || 0, session.location || null);
+        const fb = evaluateProtocol(session.incidentType, session.transcript, agent, session.duration || 0, session.location || null, { dispatchedAt: session.dispatchedAt ?? null });
         fb.backfilled = !!session.feedback.backfilled;
         session.feedback = fb;
         session.accuracy = fb.score;
@@ -5686,7 +5713,8 @@ Vráť IBA platný JSON (všetky texty po slovensky, oslovuj dispečera v 2. oso
       const agent = (typeof activeAgent !== 'undefined' && activeAgent) ? activeAgent : null;
       // Okamžitá spätná väzba pre dispečera (lokálne vyhodnotenie protokolu)
       const location = getLocationSummary();
-      const feedback = evaluateProtocol(incidentType, transcriptMessages, agent, callDuration, location);
+      const dispatchedAt = typeof callDispatchedAt === 'number' ? callDispatchedAt : null;
+      const feedback = evaluateProtocol(incidentType, transcriptMessages, agent, callDuration, location, { dispatchedAt });
       const rating = transcriptMessages.length > 0 ? feedback.score : 0;
       const completion = computeBaselineCompletion(incidentType, transcriptMessages);
 
@@ -5702,6 +5730,7 @@ Vráť IBA platný JSON (všetky texty po slovensky, oslovuj dispečera v 2. oso
         status: 'Success',
         duration: callDuration,
         location,
+        dispatchedAt,
         scenario: agent ? { name: agent.name, caller: agent.caller, scenario: agent.scenario, location: agent.location, injury: agent.injury, risk: agent.risk } : null,
         feedback,
         feedbackStatus: GROQ_API_KEY ? 'pending' : 'local'
