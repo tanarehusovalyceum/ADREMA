@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ako to funguje – ADREMA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@400,0..1&display=swap" rel="stylesheet" />
+  <link href="site.css" rel="stylesheet" />
+  <style>
+    .steps { list-style: none; padding: 0; margin: 0 0 24px; display: grid; gap: 14px; }
+    .steps li { display: flex; gap: 14px; align-items: flex-start; }
+    .steps .num {
+      flex: none; width: 36px; height: 36px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--field); color: var(--primary);
+    }
+    .steps b { display: block; margin-bottom: 2px; }
+    .steps span.t { color: var(--muted); font-size: 14px; line-height: 1.5; }
+  </style>
+  <script>
+    try {
+      const theme = localStorage.getItem('theme');
+      if (theme === 'dark') document.documentElement.classList.add('dark');
+      if (theme === 'light') document.documentElement.classList.add('light');
+    } catch (e) { }
+  </script>
+</head>
+<body>
+  <header><a class="logo" href="index.html">ADREMA</a></header>
+
+  <main>
+    <div class="card">
+      <div class="badge"><span class="material-symbols-outlined">school</span>Úvod</div>
+      <h1>Ako prebieha tréning</h1>
+      <p class="sub">Si dispečer linky 112. Volá ti človek v panike a ty musíš čo najrýchlejšie zistiť, čo sa stalo a kde, a poslať pomoc.</p>
+
+      <ol class="steps">
+        <li><div class="num"><span class="material-symbols-outlined">call</span></div>
+          <div><b>Prijmi hovor</b><span class="t">Klikni na „Začať tiesňový hovor“ a povoľ mikrofón. Najlepšie so slúchadlami.</span></div></li>
+        <li><div class="num"><span class="material-symbols-outlined">my_location</span></div>
+          <div><b>Zisti polohu</b><span class="t">Niekedy príde automatická poloha z mobilu (AML), inak adresu vyhľadaj na mape a potvrď ju.</span></div></li>
+        <li><div class="num"><span class="material-symbols-outlined">medical_services</span></div>
+          <div><b>Over stav a daj inštrukcie</b><span class="t">Vedomie, dýchanie, krvácanie – a navigaj volajúceho prvou pomocou krok po kroku.</span></div></li>
+        <li><div class="num"><span class="material-symbols-outlined">fact_check</span></div>
+          <div><b>Pozri si spätnú väzbu</b><span class="t">Po ukončení hovoru dostaneš skóre, chyby a odporúčania. Všetky hovory nájdeš v záložke „Výsledky hovorov“.</span></div></li>
+      </ol>
+
+      <div class="row">
+        <button class="btn" id="go" type="button"><span class="material-symbols-outlined">arrow_forward</span>Pokračovať do simulátora</button>
+      </div>
+    </div>
+  </main>
+
+  <footer>ADREMA · Adaptive Rescue Management Simulator</footer>
+
+  <script>
+    document.getElementById('go').addEventListener('click', () => {
+      try { localStorage.setItem('adrema_tutorial_done', 'true'); } catch (e) { }
+      let loggedIn = false;
+      try { loggedIn = localStorage.getItem('adrema_logged_in') === 'true'; } catch (e) { }
+      location.href = loggedIn ? 'simulator.html' : 'login.html';
+    });
+  </script>
+</body>
+</html>

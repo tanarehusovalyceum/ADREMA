@@ -1,0 +1,8 @@
+# Kľúče – na web sa config.js generuje z GitHub Secrets
+config.js
+_site/
+.DS_Store
+zaloha/
+.vercel/
+.vercel
+.env*

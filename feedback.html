@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Spätná väzba – ADREMA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@400,0..1&display=swap" rel="stylesheet" />
+  <link href="site.css" rel="stylesheet" />
+  <script>
+    try {
+      const theme = localStorage.getItem('theme');
+      if (theme === 'dark') document.documentElement.classList.add('dark');
+      if (theme === 'light') document.documentElement.classList.add('light');
+    } catch (e) { }
+  </script>
+</head>
+<body>
+  <header><a class="logo" href="index.html">ADREMA</a></header>
+
+  <main>
+    <form class="card" id="fb-form">
+      <div class="badge"><span class="material-symbols-outlined">rate_review</span>Spätná väzba</div>
+      <h1>Napíš nám</h1>
+      <p class="sub">Našiel si chybu, chýba ti scenár alebo máš nápad? Pomôže nám to vylepšiť simulátor.</p>
+
+      <label class="field" for="category">Typ</label>
+      <select id="category" required>
+        <option value="bug">Chyba</option>
+        <option value="scenario">Nový scenár</option>
+        <option value="feature">Nová funkcia</option>
+        <option value="ui">Dizajn</option>
+        <option value="other">Iné</option>
+      </select>
+
+      <label class="field" for="subject">Predmet</label>
+      <input id="subject" type="text" required maxlength="120" placeholder="Krátko, o čo ide" />
+
+      <label class="field" for="description">Popis</label>
+      <textarea id="description" required maxlength="4000" placeholder="Čo sa stalo, kde, ako to zopakovať…"></textarea>
+
+      <div class="row">
+        <button class="btn" type="submit"><span class="material-symbols-outlined">send</span>Odoslať</button>
+        <a class="btn secondary" href="simulator.html">Späť do simulátora</a>
+      </div>
+      <p class="note" id="status" role="status" aria-live="polite"></p>
+    </form>
+  </main>
+
+  <footer>ADREMA · Adaptive Rescue Management Simulator</footer>
+
+  <script>
+    // Ukladá sa do rovnakého úložiska, ktoré číta admin v záložke „Spätná väzba“ (adrema_feedbacks)
+    document.getElementById('fb-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const status = document.getElementById('status');
+      const item = {
+        id: Date.now(),
+        category: document.getElementById('category').value,
+        subject: document.getElementById('subject').value.trim(),
+        description: document.getElementById('description').value.trim(),
+        user: (() => { try { return localStorage.getItem('adrema_user_name') || 'Anonym'; } catch (err) { return 'Anonym'; } })(),
+        date: new Date().toLocaleString('sk-SK'),
+        status: 'Nové'
+      };
+      if (!item.subject || !item.description) return;
+      try {
+        const list = JSON.parse(localStorage.getItem('adrema_feedbacks') || '[]');
+        list.unshift(item);
+        localStorage.setItem('adrema_feedbacks', JSON.stringify(list));
+        e.target.reset();
+        status.className = 'note msg-ok';
+        status.textContent = 'Ďakujeme, spätná väzba bola uložená.';
+      } catch (err) {
+        status.className = 'note';
+        status.textContent = 'Uloženie zlyhalo – prehliadač neumožňuje ukladať dáta.';
+      }
+    });
+  </script>
+</body>
+</html>

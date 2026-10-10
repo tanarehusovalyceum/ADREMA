@@ -1,0 +1,20 @@
+# Websupport (Apache)
+DirectoryIndex index.html
+Options -Indexes
+
+# Mikrofón v prehliadači funguje len cez HTTPS → presmerovať http na https
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{HTTPS} !=on
+  RewriteCond %{HTTP:X-Forwarded-Proto} !=https
+  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+</IfModule>
+
+<IfModule mod_headers.c>
+  # Povoliť mikrofón a polohu len tejto stránke
+  Header always set Permissions-Policy "microphone=(self), geolocation=(self), camera=()"
+  # Po nasadení novej verzie ju prehliadač hneď načíta (žiadna stará kópia v cache)
+  <FilesMatch "\.(html|js|css)$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+</IfModule>

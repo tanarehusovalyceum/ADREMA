@@ -1,0 +1,42 @@
+# Po každom push do vetvy main nahrá web na Websupport cez FTP.
+# Potrebné GitHub Secrets: FTP_SERVER, FTP_USERNAME, FTP_PASSWORD, VAPI_PUBLIC_KEY, ELEVENLABS_VOICE_ID
+# Voliteľné Secrets: GROQ_API_KEY, VAPI_LLM_MODEL, ELEVENLABS_MODEL, SUPABASE_URL, SUPABASE_KEY
+# Voliteľné Variables: FTP_SERVER_DIR (predvolene ./web/), FTP_PROTOCOL (predvolene ftps)
+name: Nasadenie na Websupport
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-websupport
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Stiahnuť kód
+        uses: actions/checkout@v4
+
+      - name: Pripraviť súbory pre web a config.js zo Secrets
+        env:
+          VAPI_PUBLIC_KEY: ${{ secrets.VAPI_PUBLIC_KEY }}
+          ELEVENLABS_VOICE_ID: ${{ secrets.ELEVENLABS_VOICE_ID }}
+          VAPI_LLM_MODEL: ${{ secrets.VAPI_LLM_MODEL }}
+          ELEVENLABS_MODEL: ${{ secrets.ELEVENLABS_MODEL }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: node scripts/build-site.mjs
+
+      - name: Nahrať na Websupport (FTP)
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ${{ vars.FTP_PROTOCOL || 'ftps' }}
+          local-dir: ./_site/
+          server-dir: ${{ vars.FTP_SERVER_DIR || './web/' }}

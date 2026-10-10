@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Prihlásenie – ADREMA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@400,0..1&display=swap" rel="stylesheet" />
+  <link href="site.css" rel="stylesheet" />
+  <script>
+    try {
+      const theme = localStorage.getItem('theme');
+      if (theme === 'dark') document.documentElement.classList.add('dark');
+      if (theme === 'light') document.documentElement.classList.add('light');
+    } catch (e) { }
+  </script>
+</head>
+<body>
+  <header><a class="logo" href="index.html">ADREMA</a></header>
+
+  <main>
+    <form class="card" id="login-form" style="max-width:420px">
+      <div class="badge"><span class="material-symbols-outlined">emergency</span>Tréning dispečerov 112</div>
+      <h1>Prihlásenie</h1>
+      <p class="sub">Zadaj svoje používateľské meno. Pod ním sa ti budú ukladať hovory a spätná väzba.</p>
+
+      <label class="field" for="username">Používateľské meno</label>
+      <input id="username" name="username" type="text" autocomplete="username" required maxlength="40" list="known-users" placeholder="napr. Michal" />
+      <datalist id="known-users"></datalist>
+
+      <button class="btn" type="submit" style="width:100%">
+        <span class="material-symbols-outlined">login</span>Prihlásiť sa
+      </button>
+
+      <p class="note">Hovory a výsledky sa ukladajú v tomto prehliadači. Na inom zariadení začneš s prázdnou históriou.</p>
+    </form>
+  </main>
+
+  <footer>ADREMA · Adaptive Rescue Management Simulator</footer>
+
+  <script>
+    // Už prihlásený → rovno do simulátora
+    try { if (localStorage.getItem('adrema_logged_in') === 'true') location.replace('simulator.html'); } catch (e) { }
+
+    // Ponuka mien, ktoré sa na tomto zariadení už prihlásili
+    try {
+      const users = Object.keys(localStorage).filter(k => k.startsWith('adremaSessions_')).map(k => k.slice('adremaSessions_'.length));
+      document.getElementById('known-users').innerHTML = users.map(u => `<option value="${u.replace(/"/g, '&quot;')}"></option>`).join('');
+    } catch (e) { }
+
+    document.getElementById('login-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('username').value.trim();
+      if (!name) return;
+      try {
+        localStorage.setItem('adrema_user_name', name);
+        localStorage.setItem('adrema_logged_in', 'true');
+        if (!localStorage.getItem('appLang')) localStorage.setItem('appLang', 'sk');
+      } catch (err) { }
+      // Prvé prihlásenie na tomto zariadení → krátky úvod
+      let tutorialDone = false;
+      try { tutorialDone = localStorage.getItem('adrema_tutorial_done') === 'true'; } catch (err) { }
+      location.href = tutorialDone ? 'simulator.html' : 'onboarding.html';
+    });
+  </script>
+</body>
+</html>
