@@ -3964,18 +3964,18 @@ ${audioTags
           similarityBoost: 0.8,
           style: 0,
           useSpeakerBoost: true,
-          // Text ide po celých vetách (súvislá intonácia, hlasové značky ostanú celé).
-          // v4 Turbo: kratšie úseky → volajúci začne hovoriť skôr; v3 je pomalší, preto dlhšie úseky
+          // Celá replika ide do hlasu naraz – pri delení na úseky (aj po čiarkach) sa každý úsek generoval zvlášť,
+          // značka emócie platila len pre prvý a tón aj charakter hlasu sa počas hovoru menili.
+          // v3 je pomalý, preto ostáva po celých vetách (úseky aspoň 80 znakov).
           chunkPlan: voiceModel === 'eleven_v3'
             ? { enabled: true, minCharacters: 80, punctuationBoundaries: ['.', '!', '?'] }
-            : EXPRESSIVE_VOICE_MODELS.includes(voiceModel)
-              ? { enabled: true, minCharacters: 30, punctuationBoundaries: ['.', '!', '?'] }
-              : { enabled: false },
-          // Ak model zlyhá: eleven_v3 s tým istým hlasom (značky fungujú), potom stabilný multilingual_v2
+            : { enabled: false },
+          // Ak model zlyhá: eleven_v3, potom multilingual_v2 – vždy s TÝM ISTÝM hlasom volajúceho,
+          // inak by sa uprostred hovoru zmenil človek
           fallbackPlan: {
             voices: [
               ...(voiceModel !== 'eleven_v3' ? [{ provider: '11labs', voiceId: voiceId, model: 'eleven_v3', language: 'sk', stability: 0.5, similarityBoost: 0.8, style: 0, useSpeakerBoost: true }] : []),
-              { provider: '11labs', voiceId: getEnv('REACT_APP_ELEVENLABS_VOICE_ID') || voiceId, model: 'eleven_multilingual_v2', language: 'sk', stability: 0.55, similarityBoost: 0.8, style: 0, useSpeakerBoost: true }
+              { provider: '11labs', voiceId: voiceId, model: 'eleven_multilingual_v2', language: 'sk', stability: 0.55, similarityBoost: 0.8, style: 0, useSpeakerBoost: true }
             ]
           }
         },
@@ -5385,7 +5385,7 @@ Vráť IBA platný JSON (všetky texty po slovensky, oslovuj dispečera v 2. oso
       </div>`;
     }
 
-    const APP_VERSION = '2026-10-11 · hlas v4 v8';
+    const APP_VERSION = '2026-10-11 · hlas v4 v9';
 
     // Skopíruje uložený hovor (prepis + hodnotenie) – na diagnostiku, keď hodnotenie nesedí
     function copyCallData(sessionId) {
