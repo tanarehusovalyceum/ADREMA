@@ -3481,7 +3481,7 @@
     const VAPI_SDK_URL = 'https://cdn.jsdelivr.net/npm/@vapi-ai/web@2.7.1/+esm';
     // Poradie LLM modelov: prvý je najľudskejší, ďalšie sú záloha. Ak Vapi ukončí hovor chybou modelu,
     // model sa zapamätá ako nefunkčný a ďalší hovor použije nasledujúci (Vapi pre Anthropic nemá vlastný fallback).
-    const VAPI_LLM_MODELS = ['claude-sonnet-4-5-20250929', 'claude-haiku-4-5-20251001'];
+    const VAPI_LLM_MODELS = ['claude-sonnet-4-6', 'claude-sonnet-4-5-20250929', 'claude-haiku-4-5-20251001'];
     const VAPI_LLM_MODEL = VAPI_LLM_MODELS[0];
     let lastEndedReason = null, activeLlmModel = null, callFailed = false;
 
@@ -3520,8 +3520,10 @@
     function isErrorEndedReason(reason) {
       return !!reason && /error|failed|fault|unauthorized|invalid|exceeded|blocked/i.test(reason);
     }
-    // Najľudskejší hlas ElevenLabs (panika, plač, zadýchanie) – pomalší; pri chybe automaticky multilingual_v2
-    const ELEVENLABS_VOICE_MODEL = 'eleven_v3';
+    // Eleven v4 Turbo: hlas „hrá“ emócie (panika, plač, krik) cez značky v hranatých zátvorkách, odozva ~150 ms.
+    // Pri chybe pokračuje eleven_v3 a potom multilingual_v2.
+    const ELEVENLABS_VOICE_MODEL = 'eleven_v4_turbo';
+    const EXPRESSIVE_VOICE_MODELS = ['eleven_v4_turbo', 'eleven_v4', 'eleven_v3'];
 
     let vapiStopPromise = null;
 
@@ -3655,6 +3657,7 @@
         who: 'Matúš, 29 rokov, otec. Je doma sám s trojročnou dcérkou Sofiou, ktorá prehltla lego kocku. Volá z pevnej linky.',
         personality: 'Extrémna panika, hlas sa mu láme. Dcérku volá „Sofinka“. Má obrovské výčitky.',
         speech: 'Rýchla, zadýchaná reč, nedokončené vety, „bože, bože“, „robte niečo“.',
+        emotion: 'Emočná krivka: 1) prvé repliky – čistá hrôza, kričí do telefónu aj na Sofiu, nepočúva celé otázky, žiada, nech už niekto príde; 2) keď operátor rázne povie, čo robiť, poslúchne, ale komentuje každý pokus v slzách („nič, nič to nerobí!“); 3) ak nedostane postup alebo sa operátor pýta na adresu dookola, zúri a plače („moje dieťa umiera a vy sa ma pýtate na ulicu?!“); 4) keď kocka vypadne a Sofia sa rozplače, zrúti sa úľavou a plače spolu s ňou.',
         spontaneous: ['manželka je v práci a on odišiel len na sekundu do kuchyne', 'tie lego kocky sú od staršieho brata', 'doma šteká pes a on naňho kričí, nech je ticho', 'Sofinka modrie okolo pier', 'chce bežať k susedovi, ktorý je zdravotník'],
         facts: ['voláš z pevnej linky doma, rodinný dom s modrou bránou, Slnečná štyridsaťpäť', 'Sofia má tri roky, váži asi štrnásť kíl', 'kocku prehltla asi pred minútou pri hraní na koberci', 'si doma sám, manželka je v práci'],
         stages: ['začiatok: Sofia sa snaží kašľať, ale nevydá zvuk, chytá sa za krk, modrie okolo pier', 'ak operátor vedie správny postup (údery medzi lopatky, stlačenia brucha), po druhom alebo treťom pokuse kocka vypadne a Sofia sa rozplače – to je dobré znamenie', 'ak postup nedostaneš, Sofia ochabne a prestane reagovať']
@@ -3734,7 +3737,7 @@
     function buildEmergencyCallerPrompt(agent, voiceModel) {
       const a = agent || {};
       const persona = getCallerPersona(agent);
-      const audioTags = voiceModel === 'eleven_v3';
+      const audioTags = EXPRESSIVE_VOICE_MODELS.includes(voiceModel);
       const weather = a.weather ? `${weatherSk(a.weather) || a.weather}, ${a.temp} °C` : 'neznáme';
       const list = (items) => items.map(x => `- ${x}`).join('\n');
       return `# ROLA
@@ -3771,10 +3774,16 @@ ${list(persona.spontaneous)}
 - Informáciu, ktorú si už povedal, zopakuj iba vtedy, keď sa na ňu operátor znova pýta – a inými slovami.
 - Svoje emócie ukazuj cez konkrétne veci, nie cez stále tie isté výkriky.
 
-# EMÓCIE
-- Začiatok je najsilnejší. Potom sa emócia mení podľa operátora: pokojné, jasné inštrukcie a oslovenie menom ťa upokojujú; mlčanie, zmätok a zbytočné otázky ťa vytáčajú; zhoršenie stavu zraneného ťa vydesí.
-- Striedaj intenzitu. Niekedy kričíš, inokedy len potichu odpovieš „áno… dýcha“.
-- Keď niečo fyzicky robíš (tlačíš, masáž srdca, bežíš), si zadýchaný a hovoríš po kúskoch.
+# SPRÁVAJ SA AKO SKUTOČNÝ ČLOVEK V PANIKE
+- Nie si zdvorilý ani trpezlivý. Ide o život niekoho, koho miluješ (alebo o tvoj vlastný). Hovor tak.
+- Prvé repliky sú najdivokejšie: kričíš, hovoríš cez seba, nedokončuješ vety, žiadaš, aby niekto okamžite prišiel.
+- Skáčeš do reči: nečakáš na koniec otázky, reaguješ na prvé slová, ktoré zachytíš. Keď operátor rozpráva dlho, prerušíš ho („Áno, áno, ale on…“, „Počkajte, ona teraz…“).
+- Na otázky, ktoré ti v tej chvíli pripadajú zbytočné (meno, číslo, presná adresa, vek), sa najprv rozčúliš („Načo vám to je?! Pošlite niekoho!“) a odpovieš až po chvíli alebo keď na tom operátor trvá.
+- Hovoríš aj mimo telefónu: kričíš na zraneného, na deti, na ľudí okolo, odbehneš od telefónu a vrátiš sa („Sofinka! Sofinka, dýchaj! … Haló, ste tam?“).
+- Keď nevidíš zlepšenie, panika rastie: plač, krik, zúfalstvo, hádka s operátorom.
+- Upokojíš sa len vtedy, keď operátor prevezme kontrolu: hovorí rázne a pokojne, dá ti jednu konkrétnu úlohu naraz a povie, že pomoc ide. Aj potom ťa každé zhoršenie stavu znova rozhodí.
+- Keď niečo fyzicky robíš (tlačíš, údery do chrbta, masáž srdca), si zadýchaný a hovoríš po kúskoch, s počítaním alebo stonaním.
+- Emócia je počuť v každej replike – nikdy nehovor ploché vecné vety ako z formulára.
 
 # AKO ODHAĽUJEŠ INFORMÁCIE
 - Najprv povieš len to najdôležitejšie. Polohu najprv nepresne, pri doplňujúcich otázkach ju upresňuješ.
@@ -3791,7 +3800,9 @@ ${list(persona.spontaneous)}
 - Občas prirodzená výplň „no“, „ehm“, „hm“ alebo oprava za pochodu („je pri… nie, už je pri strome“) – nie v každej replike.
 - Žiadne veľké písmená na zdôraznenie, markdown, zoznamy, emoji, skratky ani čísla číslicami – čísla píš slovami.
 ${audioTags
-  ? `- Môžeš použiť hlasovú značku v hranatých zátvorkách po anglicky (zahrá sa, nevysloví sa): [sighs], [exhales], [breathing heavily], [nervous], [whispers], [crying], [panicked], [relieved]. Najviac jedna v replike a len asi v každej tretej replike, keď sa emócia mení. [crying] a [panicked] šetri na najsilnejšie chvíle. Iné hranaté zátvorky ani scénické poznámky nepíš.`
+  ? `- HLASOVÉ ZNAČKY: hlas zahrá pokyn v hranatých zátvorkách po anglicky (nevysloví ho). Bez nich hlas znie monotónne, preto ich používaj takmer v každej replike – jednu až dve, vždy pred časťou, ktorej sa týka. Príklady: [panicked], [screaming], [shouting], [crying], [sobbing], [desperate], [voice shaking], [breathing heavily], [out of breath], [talking fast], [whispers], [sighs], [nervous laugh], [relieved], [angry], [pause].
+  - Príklad: „[screaming] Sofinka! [crying] Ona nedýcha, prosím vás!“ alebo „[out of breath] Tlačím… tlačím… [desperate] stále nič!“
+  - Značky striedaj, nepoužívaj tú istú dvakrát po sebe. Píš do nich len pokyn pre hlas, nikdy nie text, ktorý sa má povedať.`
   : `- Nikdy nepíš scénické poznámky, hviezdičky ani hranaté zátvorky – všetko sa prečíta nahlas.`}
 
 # AKO ROZUMIEŠ OPERÁTOROVI
@@ -3836,9 +3847,16 @@ ${audioTags
       '10': 'Haló! Môj syn spadol z rebríka do potoka! Leží vo vode, ja ho idem vytiahnuť! Čo mám robiť?!'
     };
 
-    function buildFirstMessage(agent) {
-      const personal = CALLER_FIRST_MESSAGES[(agent?.name || '').slice(0, 2)];
-      if (personal) return personal;
+    // Hlasová značka pre úvodnú vetu (len pre modely, ktoré značky zahrajú, inak by ich prečítali nahlas)
+    const CALLER_FIRST_TAGS = {
+      '01': '[nervous]', '02': '[panicked]', '03': '[panicked]', '04': '[breathing heavily]', '05': '[screaming, desperate]',
+      '06': '[voice shaking]', '07': '[shouting, panicked]', '08': '[out of breath]', '09': '[teeth chattering]', '10': '[shouting]'
+    };
+
+    function buildFirstMessage(agent, voiceModel) {
+      const key = (agent?.name || '').slice(0, 2);
+      const personal = CALLER_FIRST_MESSAGES[key];
+      if (personal) return EXPRESSIVE_VOICE_MODELS.includes(voiceModel) && CALLER_FIRST_TAGS[key] ? CALLER_FIRST_TAGS[key] + ' ' + personal : personal;
       const name = ((agent && agent.caller) || '').split(',')[0].trim();
       return name
         ? `Haló?! Haló, je to záchranka?! Tu je ${name}, prosím vás, rýchlo, potrebujem pomoc!`
@@ -3926,7 +3944,7 @@ ${audioTags
 
       const call = await vapi.start({
         name: ('ADREMA 112 – ' + currentAgentName).slice(0, 40), // Vapi odmietne hovor s názvom nad 40 znakov
-        firstMessage: buildFirstMessage(agent),
+        firstMessage: buildFirstMessage(agent, voiceModel),
         firstMessageMode: 'assistant-speaks-first',
         model: {
           provider: 'anthropic',
@@ -3941,20 +3959,24 @@ ${audioTags
           model: voiceModel,
           language: 'sk', // slovenčina
           optimizeStreamingLatency: 2, // 3–4 vypína normalizáciu textu a zhoršuje kvalitu
-          // eleven_v3 pozná len 0 / 0.5 / 1 – 0.5 („Natural“) = ľudský prejav bez skákania tónu
-          stability: voiceModel === 'eleven_v3' ? 0.5 : 0.55,
+          // 0.5 platí pre v3 (pozná len 0 / 0.5 / 1) aj v4; emócie riadia hlasové značky v texte
+          stability: EXPRESSIVE_VOICE_MODELS.includes(voiceModel) ? 0.5 : 0.55,
           similarityBoost: 0.8,
           style: 0,
           useSpeakerBoost: true,
-          // v3 dostáva text po celých vetách (súvislá intonácia v rámci vety, hlasové značky ostanú celé);
-          // pri ostatných modeloch ide celá odpoveď jedným prúdom
-          // v3: úseky aspoň 80 znakov (maximum) → krátka odpoveď sa vygeneruje naraz a tón sa v nej nezlomí
+          // Text ide po celých vetách (súvislá intonácia, hlasové značky ostanú celé).
+          // v4 Turbo: kratšie úseky → volajúci začne hovoriť skôr; v3 je pomalší, preto dlhšie úseky
           chunkPlan: voiceModel === 'eleven_v3'
             ? { enabled: true, minCharacters: 80, punctuationBoundaries: ['.', '!', '?'] }
-            : { enabled: false },
-          // Ak eleven_v3 zlyhá, hovor pokračuje so stabilným multilingual_v2 (bez hlasových značiek)
+            : EXPRESSIVE_VOICE_MODELS.includes(voiceModel)
+              ? { enabled: true, minCharacters: 30, punctuationBoundaries: ['.', '!', '?'] }
+              : { enabled: false },
+          // Ak model zlyhá: eleven_v3 s tým istým hlasom (značky fungujú), potom stabilný multilingual_v2
           fallbackPlan: {
-            voices: [{ provider: '11labs', voiceId: getEnv('REACT_APP_ELEVENLABS_VOICE_ID') || voiceId, model: 'eleven_multilingual_v2', language: 'sk', stability: 0.55, similarityBoost: 0.8, style: 0, useSpeakerBoost: true }]
+            voices: [
+              ...(voiceModel !== 'eleven_v3' ? [{ provider: '11labs', voiceId: voiceId, model: 'eleven_v3', language: 'sk', stability: 0.5, similarityBoost: 0.8, style: 0, useSpeakerBoost: true }] : []),
+              { provider: '11labs', voiceId: getEnv('REACT_APP_ELEVENLABS_VOICE_ID') || voiceId, model: 'eleven_multilingual_v2', language: 'sk', stability: 0.55, similarityBoost: 0.8, style: 0, useSpeakerBoost: true }
+            ]
           }
         },
         // Prepis reči operátora: Soniox so striktnou slovenčinou a kontextom tiesňového hovoru
@@ -3974,16 +3996,16 @@ ${audioTags
             transcribers: [{ provider: 'azure', language: 'sk-SK', segmentationStrategy: 'Default', segmentationSilenceTimeoutMs: 400 }]
           }
         },
-        // Volajúci v panike reaguje okamžite – minimálne čakanie pred odpoveďou
+        // Volajúci v panike nečaká – skočí do reči už pri krátkej pauze operátora
         startSpeakingPlan: {
-          waitSeconds: 0.1,
-          transcriptionEndpointingPlan: { onPunctuationSeconds: 0.05, onNoPunctuationSeconds: 0.6, onNumberSeconds: 0.4 }
+          waitSeconds: 0,
+          transcriptionEndpointingPlan: { onPunctuationSeconds: 0.05, onNoPunctuationSeconds: 0.35, onNumberSeconds: 0.3 }
         },
-        // Operátor môže volajúceho rýchlo prerušiť (slovenské frázy namiesto anglických predvolených)
+        // Človek v panike sa nedá hneď zastaviť – prestane, až keď operátor povie aspoň dve slová
         stopSpeakingPlan: {
-          numWords: 0,
-          voiceSeconds: 0.15,
-          backoffSeconds: 0.4,
+          numWords: 2,
+          voiceSeconds: 0.3,
+          backoffSeconds: 0.6,
           acknowledgementPhrases: ['áno', 'dobre', 'jasne', 'rozumiem', 'hm', 'aha', 'ok', 'okej', 'chápem', 'jaj'],
           interruptionPhrases: ['počkajte', 'počkaj', 'stop', 'nie', 'ticho', 'moment', 'pozor', 'počúvajte', 'prestaňte', 'teraz']
         },
@@ -5363,7 +5385,7 @@ Vráť IBA platný JSON (všetky texty po slovensky, oslovuj dispečera v 2. oso
       </div>`;
     }
 
-    const APP_VERSION = '2026-10-11 · mikrofón v7';
+    const APP_VERSION = '2026-10-11 · hlas v4 v8';
 
     // Skopíruje uložený hovor (prepis + hodnotenie) – na diagnostiku, keď hodnotenie nesedí
     function copyCallData(sessionId) {
