@@ -3463,12 +3463,15 @@
       elements.status.textContent = '🎤 Žiadam o prístup k mikrofónu...';
 
       try {
-        // Vapi SDK si mikrofón vyžiada sám pri vapi.start()
+        // Mikrofón si vypýtame hneď pri kliknutí – keby to čakalo na stiahnutie Vapi SDK,
+        // prehliadač by už žiadosť nebral ako reakciu na klik a okno s povolením by neukázal
+        await ensureMicrophone();
         await connectToAgent();
       } catch (error) {
         console.error('Failed to initialize:', error);
-        elements.status.textContent = 'Chyba: ' + error.message;
-        showErrorMode();
+        elements.status.textContent = '❌ ' + error.message;
+        showErrorMode(error.micError ? error.message : null);
+        if (error.micError) callStarted = false;
       }
     }
 
@@ -3552,6 +3555,47 @@
     function getEnv(key) {
       return (window.process && window.process.env && window.process.env[key]) || '';
     }
+
+    // Návod, ako mikrofón povoliť, keď ho prehliadač už raz zablokoval (vtedy sa znova nepýta)
+    function micUnblockHint() {
+      const ua = navigator.userAgent;
+      if (/iPhone|iPad|iPod/.test(ua)) return 'Na iPhone: ťuknite na „aA“ v adresnom riadku → Nastavenia webovej stránky → Mikrofón → Povoliť, potom stránku obnovte.';
+      if (/Safari/.test(ua) && !/Chrome|Chromium|Edg/.test(ua)) return 'V Safari: menu Safari → Nastavenia pre túto webovú stránku → Mikrofón → Povoliť, potom stránku obnovte.';
+      return 'Kliknite na ikonu vľavo v adresnom riadku → Mikrofón → Povoliť, potom stránku obnovte.';
+    }
+
+    function micError(message) {
+      const err = new Error(message);
+      err.micError = true;
+      return err;
+    }
+
+    async function ensureMicrophone() {
+      if (!window.isSecureContext || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        throw micError('Prehliadač nepovoľuje mikrofón na tejto adrese. Otvorte simulátor cez https://www.adrema.online.');
+      }
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        // Len overenie povolenia – samotný hovor si mikrofón otvorí cez Vapi
+        stream.getTracks().forEach(t => t.stop());
+      } catch (e) {
+        const name = e && e.name;
+        if (name === 'NotAllowedError' || name === 'SecurityError') {
+          throw micError('Prístup k mikrofónu je zablokovaný. ' + micUnblockHint());
+        }
+        if (name === 'NotFoundError' || name === 'OverconstrainedError') {
+          throw micError('Nenašiel sa žiadny mikrofón. Pripojte slúchadlá alebo mikrofón a skúste to znova.');
+        }
+        if (name === 'NotReadableError' || name === 'AbortError') {
+          throw micError('Mikrofón práve používa iná aplikácia alebo karta (napr. Teams, Zoom, iný hovor). Zatvorte ju a skúste to znova.');
+        }
+        throw micError('Mikrofón sa nepodarilo zapnúť' + (e && e.message ? ': ' + e.message : '') + '.');
+      }
+    }
+
+    // Vapi SDK načítame hneď po otvorení stránky, aby hovor po kliknutí štartoval bez čakania
+    const preloadVapi = () => loadVapiClass().catch(err => { VapiClass = null; console.warn('Vapi SDK preload zlyhal:', err); });
+    if ('requestIdleCallback' in window) requestIdleCallback(preloadVapi, { timeout: 3000 }); else setTimeout(preloadVapi, 1500);
 
     async function loadVapiClass() {
       if (VapiClass) return VapiClass;
@@ -3881,7 +3925,7 @@ ${audioTags
       });
 
       const call = await vapi.start({
-        name: 'ADREMA 112 – ' + currentAgentName,
+        name: ('ADREMA 112 – ' + currentAgentName).slice(0, 40), // Vapi odmietne hovor s názvom nad 40 znakov
         firstMessage: buildFirstMessage(agent),
         firstMessageMode: 'assistant-speaks-first',
         model: {
@@ -4134,10 +4178,18 @@ ${audioTags
       }
     }
 
-    function showErrorMode() {
+    function showErrorMode(message) {
       elements.chat.classList.remove('hidden');
       elements.loading.classList.add('hidden');
-      addMessageToTranscript('ℹ️ Systém', 'Nepodarilo sa pripojiť alebo získať prístup k mikrofónu. Skontrolujte povolenia a skúste to znova.', true);
+      addMessageToTranscript('ℹ️ Systém', message || 'Nepodarilo sa pripojiť alebo získať prístup k mikrofónu. Skontrolujte povolenia a skúste to znova.', true);
+      if (message && elements.transcript) {
+        const retry = document.createElement('button');
+        retry.type = 'button';
+        retry.className = 'px-3 py-1.5 rounded-lg bg-primary text-white text-[11px] font-bold';
+        retry.textContent = 'Skúsiť znova';
+        retry.addEventListener('click', () => showLandingPage());
+        elements.transcript.appendChild(retry);
+      }
     }
 
     elements.sendBtn.addEventListener('click', sendMessage);
@@ -5311,7 +5363,7 @@ Vráť IBA platný JSON (všetky texty po slovensky, oslovuj dispečera v 2. oso
       </div>`;
     }
 
-    const APP_VERSION = '2026-10-11 · volajúci v6';
+    const APP_VERSION = '2026-10-11 · mikrofón v7';
 
     // Skopíruje uložený hovor (prepis + hodnotenie) – na diagnostiku, keď hodnotenie nesedí
     function copyCallData(sessionId) {
@@ -6237,8 +6289,8 @@ Vráť IBA platný JSON (všetky texty po slovensky, oslovuj dispečera v 2. oso
       elements.loading.classList.remove('hidden');
       elements.chat.classList.add('hidden');
       elements.status.textContent = '🎤 Žiadam o prístup k mikrofónu...';
-      connectToAgent()
-        .catch(err => { elements.status.textContent = 'Chyba: ' + err.message; showErrorMode(); });
+      ensureMicrophone().then(connectToAgent)
+        .catch(err => { elements.status.textContent = '❌ ' + err.message; showErrorMode(err.micError ? err.message : null); });
     });
 
     if (!localStorage.getItem('adrema_changelog')) {
