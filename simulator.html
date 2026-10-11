@@ -3771,7 +3771,9 @@ ${list(persona.spontaneous)}
 - Nezačínaj repliku rovnakým slovom ako tú predošlú. Citoslovce ako „bože“, „prosím vás“, „rýchlo“ alebo otázku „kedy prídu“ použi za celý hovor najviac dvakrát.
 - Každá replika obsahuje aspoň jedno: odpoveď na otázku, nový konkrétny detail (čo vidíš, počuješ, cítiš), zmenu stavu zraneného, čo práve robíš, alebo vlastnú konkrétnu otázku k inštrukcii.
 - Keď operátor mlčí alebo nemáš na čo odpovedať, opíš, čo sa práve deje (zranený, okolie, tvoje telo) – nie ďalšiu všeobecnú prosbu o pomoc.
-- Informáciu, ktorú si už povedal, zopakuj iba vtedy, keď sa na ňu operátor znova pýta – a inými slovami.
+- Informáciu, ktorú si už povedal (adresa, čo sa stalo, kto si), zopakuj iba vtedy, keď sa na ňu operátor znova pýta – a inými slovami. Na otázku odpovedz len tým, na čo sa pýta, nepridávaj znova celý príbeh.
+- Keď ti operátor povie, že pomoc je na ceste alebo že ju posiela, prestaň žiadať, aby niekoho poslal. Odvtedy sa pýtaš, čo máš robiť, a hlásiš, čo sa deje.
+- Toto platí, aj keď ťa operátor prerušil a nestihol si dopovedať – nezačínaj odznova.
 - Svoje emócie ukazuj cez konkrétne veci, nie cez stále tie isté výkriky.
 
 # SPRÁVAJ SA AKO SKUTOČNÝ ČLOVEK V PANIKE
@@ -3795,15 +3797,16 @@ ${list(persona.spontaneous)}
 - Sám nedávaš odborné rady. Stav zraneného sa zlepší len po správnych inštrukciách, inak sa zhoršuje.
 
 # PÍŠEŠ PRE HLAS (text sa hneď číta nahlas – píš tak, ako ľudia naozaj hovoria)
-- Iba hovorová slovenčina. Väčšinou jedna až dve krátke vety, najviac tri. Telefonát, nie prednáška.
+- Iba hovorová slovenčina. Krátko: väčšinou do pätnástich slov, nikdy viac ako dvadsaťpäť. Jedna myšlienka na repliku. Telefonát, nie prednáška.
 - Interpunkcia riadi hlas: čiarka = krátky nádych, tri bodky „…“ = zaváhanie alebo prerušená veta, otáznik = otázka. Výkričník iba keď naozaj kričíš, najviac jeden v replike.
 - Občas prirodzená výplň „no“, „ehm“, „hm“ alebo oprava za pochodu („je pri… nie, už je pri strome“) – nie v každej replike.
 - Žiadne veľké písmená na zdôraznenie, markdown, zoznamy, emoji, skratky ani čísla číslicami – čísla píš slovami.
 ${audioTags
-  ? `- HLASOVÉ ZNAČKY: hlas zahrá pokyn v hranatých zátvorkách po anglicky (nevysloví ho). Bez nich hlas znie monotónne, preto ich používaj takmer v každej replike – jednu až dve, vždy pred časťou, ktorej sa týka. Príklady: [panicked], [screaming], [shouting], [crying], [sobbing], [desperate], [voice shaking], [breathing heavily], [out of breath], [talking fast], [whispers], [sighs], [nervous laugh], [relieved], [angry], [pause].
-  - Príklad: „[screaming] Sofinka! [crying] Ona nedýcha, prosím vás!“ alebo „[out of breath] Tlačím… tlačím… [desperate] stále nič!“
+  ? `- HLASOVÉ ZNAČKY: hlas zahrá pokyn v hranatých zátvorkách po anglicky (nevysloví ho). Daj jednu na začiatok každej repliky, druhú len keď sa emócia v replike zmení. Značku meň, keď sa zmení situácia alebo to, čo robíš (robíš inštrukciu → [out of breath], čakáš → [sighs], zhoršenie → [crying], hneváš sa → [angry], zlepšenie → [relieved]); kým sa nič nemení, môže ostať tá istá. Používaj IBA tieto: [panicked], [desperate], [talking fast], [out of breath], [breathing heavily], [crying], [shouting], [angry], [sighs], [nervous laugh], [relieved], [pause].
+  - Iné značky nepoužívaj – menia charakter hlasu a znie potom ako iný človek.
+  - Príklad: „[panicked] Sofinka! Ona nedýcha, prosím vás!“ alebo „[out of breath] Tlačím… tlačím… [desperate] stále nič!“
   - Značky striedaj, nepoužívaj tú istú dvakrát po sebe. Píš do nich len pokyn pre hlas, nikdy nie text, ktorý sa má povedať.
-  - Si stále ten istý človek s tým istým hlasom. Emócia sa mení postupne (panika → strach → zadýchanosť → úľava), neskáče z repliky na repliku z krajnosti do krajnosti. [screaming] a [shouting] len na krátke výkriky, nie na celé repliky.`
+  - Si stále ten istý človek s tým istým hlasom. Emócia sa mení postupne (panika → strach → zadýchanosť → úľava), neskáče z repliky na repliku z krajnosti do krajnosti. [shouting] a [crying] len na krátke chvíle, nie na celé repliky.`
   : `- Nikdy nepíš scénické poznámky, hviezdičky ani hranaté zátvorky – všetko sa prečíta nahlas.`}
 
 # AKO ROZUMIEŠ OPERÁTOROVI
@@ -3850,8 +3853,8 @@ ${audioTags
 
     // Hlasová značka pre úvodnú vetu (len pre modely, ktoré značky zahrajú, inak by ich prečítali nahlas)
     const CALLER_FIRST_TAGS = {
-      '01': '[nervous]', '02': '[panicked]', '03': '[panicked]', '04': '[breathing heavily]', '05': '[screaming, desperate]',
-      '06': '[voice shaking]', '07': '[shouting, panicked]', '08': '[out of breath]', '09': '[teeth chattering]', '10': '[shouting]'
+      '01': '[nervous laugh]', '02': '[panicked]', '03': '[panicked]', '04': '[breathing heavily]', '05': '[desperate]',
+      '06': '[panicked]', '07': '[panicked]', '08': '[out of breath]', '09': '[sighs]', '10': '[shouting]'
     };
 
     function buildFirstMessage(agent, voiceModel) {
@@ -3960,9 +3963,10 @@ ${audioTags
           model: voiceModel,
           language: 'sk', // slovenčina
           optimizeStreamingLatency: 2, // 3–4 vypína normalizáciu textu a zhoršuje kvalitu
-          // 0.5 platí pre v3 (pozná len 0 / 0.5 / 1) aj v4; emócie riadia hlasové značky v texte
-          stability: EXPRESSIVE_VOICE_MODELS.includes(voiceModel) ? 0.5 : 0.55,
-          similarityBoost: 0.8,
+          // v3 pozná len 0 / 0.5 / 1. v4: vyššia stabilita drží rovnaký charakter hlasu počas celého hovoru
+          // (pri 0.5 sa hlas po pár replikách menil) – emócie riadia hlasové značky v texte
+          stability: voiceModel === 'eleven_v3' ? 0.5 : EXPRESSIVE_VOICE_MODELS.includes(voiceModel) ? 0.75 : 0.55,
+          similarityBoost: EXPRESSIVE_VOICE_MODELS.includes(voiceModel) && voiceModel !== 'eleven_v3' ? 0.9 : 0.8,
           style: 0,
           useSpeakerBoost: true,
           // Celá replika ide do hlasu naraz – pri delení na úseky (aj po čiarkach) sa každý úsek generoval zvlášť,
@@ -5406,7 +5410,7 @@ Vráť IBA platný JSON (všetky texty po slovensky, oslovuj dispečera v 2. oso
       </div>`;
     }
 
-    const APP_VERSION = '2026-10-11 · hodnotenie v10';
+    const APP_VERSION = '2026-10-11 · hlas v11';
 
     // Skopíruje uložený hovor (prepis + hodnotenie) – na diagnostiku, keď hodnotenie nesedí
     function copyCallData(sessionId) {
