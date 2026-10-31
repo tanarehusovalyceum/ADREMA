@@ -3,9 +3,18 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ADREMA – tréning dispečerov 112</title>
+  <title>ADREMA – AI simulátor pre tréning dispečerov</title>
+  <meta name="description" content="AI simulátor pre tréning dispečerov tiesňových liniek." />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@400,0..1&display=swap" rel="stylesheet" />
+  <script>
+    // Rovnaký motív ako v simulátore (svetlý / tmavý)
+    try {
+      const theme = localStorage.getItem('theme');
+      if (theme === 'dark') document.documentElement.classList.add('dark');
+      if (theme === 'light') document.documentElement.classList.add('light');
+    } catch (e) { }
+  </script>
   <style>
     :root {
       --primary: #003b72;
@@ -15,127 +24,383 @@
       --muted: #424751;
       --card: #ffffff;
       --border: #c2c6d3;
+      --field: #edeef1;
       --accent: #ba1a1a;
+      --on-primary: #ffffff;
+      color-scheme: light;
     }
     @media (prefers-color-scheme: dark) {
-      :root:not(.light) { --primary: #a6c8ff; --primary-hover: #d5e3ff; --bg: #111418; --text: #e2e2e6; --muted: #c2c6d3; --card: #1c2026; --border: #2e3440; --accent: #ffb4ab; }
+      :root:not(.light) { --primary: #a6c8ff; --primary-hover: #d5e3ff; --bg: #111418; --text: #e2e2e6; --muted: #c2c6d3; --card: #1c2026; --border: #2e3440; --field: #262b33; --accent: #ffb4ab; --on-primary: #111418; color-scheme: dark; }
     }
-    :root.dark { --primary: #a6c8ff; --primary-hover: #d5e3ff; --bg: #111418; --text: #e2e2e6; --muted: #c2c6d3; --card: #1c2026; --border: #2e3440; --accent: #ffb4ab; }
+    :root.dark { --primary: #a6c8ff; --primary-hover: #d5e3ff; --bg: #111418; --text: #e2e2e6; --muted: #c2c6d3; --card: #1c2026; --border: #2e3440; --field: #262b33; --accent: #ffb4ab; --on-primary: #111418; color-scheme: dark; }
 
     * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 88px; }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
     body {
       margin: 0;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
       background: var(--bg);
       color: var(--text);
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      padding: 0 20px;
     }
-    header { padding: 20px 0; max-width: 960px; width: 100%; margin: 0 auto; }
-    .logo { font-weight: 900; font-size: 20px; letter-spacing: -0.02em; color: var(--primary); }
-    main { flex: 1; width: 100%; max-width: 960px; margin: 0 auto; }
-    .hero {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      max-width: 640px;
-      margin: 0 auto;
-      padding: 56px 0 72px;
-    }
-    .badge {
-      display: inline-flex; align-items: center; gap: 6px;
-      font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 20px;
-    }
-    .badge .material-symbols-outlined { font-size: 18px; font-variation-settings: 'FILL' 1; }
-    h1 {
-      font-size: clamp(32px, 6vw, 52px);
-      line-height: 1.08;
-      font-weight: 900;
-      letter-spacing: -0.03em;
-      margin: 0 0 16px;
-    }
-    h1 span { color: var(--primary); }
-    p.lead { font-size: 17px; line-height: 1.6; color: var(--muted); margin: 0 0 36px; max-width: 520px; }
-    .cta {
-      display: inline-flex; align-items: center; gap: 10px;
-      background: var(--primary);
-      color: var(--bg);
-      font-size: 18px; font-weight: 700;
-      padding: 18px 36px;
-      border-radius: 14px;
-      text-decoration: none;
-      box-shadow: 0 10px 30px -10px rgba(0, 59, 114, 0.5);
+    a { color: inherit; }
+    .wrap { width: 100%; max-width: 1040px; margin: 0 auto; padding: 0 20px; }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 1; }
+
+    /* Horná lišta */
+    .nav { position: sticky; top: 0; z-index: 10; background: var(--bg); border-bottom: 1px solid var(--border); }
+    .nav .wrap { display: flex; align-items: center; gap: 20px; min-height: 68px; }
+    .logo { font-weight: 900; font-size: 20px; letter-spacing: -0.02em; color: var(--primary); text-decoration: none; margin-right: auto; }
+    .menu { display: flex; align-items: center; gap: 20px; list-style: none; margin: 0; padding: 0; font-size: 14px; font-weight: 500; }
+    .menu a { text-decoration: none; }
+    .menu a:hover { color: var(--primary); }
+    .lang, .burger { background: none; border: 1px solid var(--border); border-radius: 8px; color: var(--text); font: inherit; font-size: 13px; font-weight: 700; padding: 8px 10px; cursor: pointer; }
+    .burger { display: none; padding: 6px 8px; line-height: 0; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      background: var(--primary); color: var(--on-primary);
+      font: inherit; font-size: 15px; font-weight: 700;
+      padding: 14px 24px; border: 2px solid var(--primary); border-radius: 12px;
+      text-decoration: none; cursor: pointer;
       transition: background 0.15s, transform 0.1s;
     }
-    .cta:hover { background: var(--primary-hover); }
-    .cta:active { transform: scale(0.97); }
-    .cta:focus-visible { outline: 3px solid var(--primary-hover); outline-offset: 3px; }
-    .cta .material-symbols-outlined { font-variation-settings: 'FILL' 1; }
-    section { padding: 0 0 72px; }
-    h2 { font-size: clamp(24px, 4vw, 32px); font-weight: 900; letter-spacing: -0.02em; margin: 0 0 24px; text-align: center; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+    .btn:hover { background: var(--primary-hover); border-color: var(--primary-hover); }
+    .btn:active { transform: scale(0.97); }
+    .btn.ghost { background: transparent; color: var(--primary); }
+    .btn.ghost:hover { background: var(--field); border-color: var(--primary); }
+    .btn.small { font-size: 14px; padding: 9px 14px; border-radius: 10px; white-space: nowrap; }
+    :focus-visible { outline: 3px solid var(--primary-hover); outline-offset: 2px; }
+
+    /* Sekcie */
+    section { padding: 72px 0; }
+    section.alt { background: var(--field); }
+    h2 { font-size: clamp(26px, 4vw, 36px); font-weight: 900; letter-spacing: -0.02em; line-height: 1.15; margin: 0 0 12px; text-align: center; }
+    .intro { color: var(--muted); font-size: 16px; line-height: 1.6; text-align: center; max-width: 620px; margin: 0 auto 40px; }
+    h3.sub { font-size: 18px; margin: 56px 0 24px; text-align: center; }
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
     .tile { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 22px; }
     .tile .material-symbols-outlined { color: var(--primary); font-size: 28px; }
     .tile h3 { font-size: 16px; margin: 10px 0 6px; }
     .tile p { font-size: 14px; line-height: 1.55; color: var(--muted); margin: 0; }
-    .contact { text-align: center; max-width: 560px; margin: 0 auto; }
-    .contact p { font-size: 16px; line-height: 1.6; color: var(--muted); margin: 0 0 24px; }
-    .contact .note { font-size: 13px; margin: 24px 0 0; }
-    footer { text-align: center; font-size: 12px; color: var(--muted); padding: 20px 0; }
+
+    /* Úvod */
+    .hero { text-align: center; padding: 72px 0 56px; }
+    .eyebrow { color: var(--accent); font-size: 13px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; margin: 0 0 18px; }
+    h1 { font-size: clamp(32px, 5.4vw, 54px); line-height: 1.1; font-weight: 900; letter-spacing: -0.03em; margin: 0 auto 32px; max-width: 880px; }
+    .actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
+    .stats { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 28px; margin: 48px 0 0; padding: 0; list-style: none; font-size: 15px; font-weight: 700; }
+    .stats li { display: flex; align-items: center; gap: 8px; }
+    .stats .material-symbols-outlined { color: var(--primary); font-size: 22px; }
+
+    /* Ukážka hovoru */
+    .demo { background: var(--card); border: 1px solid var(--border); border-radius: 16px; max-width: 720px; margin: 0 auto; overflow: hidden; }
+    .demo-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 14px 18px; border-bottom: 1px solid var(--border); font-size: 13px; font-weight: 700; }
+    .demo-head span { display: inline-flex; align-items: center; gap: 8px; }
+    .demo-head .material-symbols-outlined { color: var(--accent); font-size: 20px; }
+    .demo-log { list-style: none; margin: 0; padding: 18px; min-height: 340px; display: flex; flex-direction: column; gap: 10px; }
+    .demo-log li { max-width: 84%; padding: 10px 14px; border-radius: 12px; font-size: 14px; line-height: 1.45; background: var(--field); }
+    .demo-log li b { display: block; font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); margin-bottom: 2px; }
+    .demo-log li.me { align-self: flex-end; background: var(--primary); color: var(--on-primary); }
+    .demo-log li.me b { color: inherit; }
+    .demo-log li.end { align-self: center; max-width: 100%; background: none; color: var(--muted); font-weight: 700; text-align: center; }
+    .demo-foot { padding: 0 18px 18px; text-align: center; }
+
+    /* Paličky z ukážky k funkciám */
+    .sticks { position: relative; max-width: 100%; height: 56px; }
+    .sticks::before { content: ''; position: absolute; left: 50%; top: 0; height: 28px; border-left: 2px solid var(--primary); }
+    .sticks i { position: absolute; top: 28px; height: 28px; border-left: 2px solid var(--primary); }
+    .sticks i:nth-child(1) { left: 16.66%; }
+    .sticks i:nth-child(2) { left: 50%; }
+    .sticks i:nth-child(3) { left: 83.33%; }
+    .sticks::after { content: ''; position: absolute; left: 16.66%; right: 16.66%; top: 28px; border-top: 2px solid var(--primary); }
+
+    .audience { display: flex; align-items: center; justify-content: center; gap: 10px; text-align: center; margin: 28px 0 0; font-size: 15px; line-height: 1.5; }
+    .audience .material-symbols-outlined { color: var(--primary); }
+
+    /* Časová os */
+    .timeline { list-style: none; margin: 0; padding: 0; display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 20px; position: relative; }
+    .timeline::before { content: ''; position: absolute; left: 0; right: 0; top: 19px; border-top: 2px solid var(--primary); }
+    .timeline.next::before { border-top-style: dashed; }
+    .timeline li { position: relative; font-size: 14px; line-height: 1.5; }
+    .timeline .dot { position: relative; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; background: var(--primary); color: var(--on-primary); margin-bottom: 12px; }
+    .timeline.next .dot { background: var(--card); color: var(--primary); border: 2px dashed var(--primary); }
+    .timeline .dot .material-symbols-outlined { font-size: 20px; }
+    .timeline b { display: block; font-size: 15px; margin-bottom: 4px; }
+    .timeline span.t { color: var(--muted); }
+    .two { grid-template-columns: repeat(2, 1fr); }
+
+    /* Kontakt */
+    .contact { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: start; max-width: 860px; margin: 0 auto; }
+    form { display: grid; gap: 6px; }
+    label { font-size: 13px; font-weight: 700; margin-top: 8px; }
+    input, textarea { width: 100%; font: inherit; font-size: 15px; color: var(--text); background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 12px; }
+    textarea { min-height: 130px; resize: vertical; }
+    form .btn { margin-top: 12px; }
+    .form-note { font-size: 13px; line-height: 1.5; color: var(--muted); margin: 8px 0 0; }
+    .direct p { font-size: 15px; line-height: 1.6; color: var(--muted); margin: 0 0 8px; }
+    .direct a { font-size: 17px; font-weight: 700; color: var(--primary); overflow-wrap: anywhere; }
+
+    footer { border-top: 1px solid var(--border); padding: 24px 0; text-align: center; font-size: 13px; line-height: 1.7; color: var(--muted); }
+
+    @media (max-width: 960px) {
+      .burger { display: block; }
+      .menu { display: none; position: absolute; left: 0; right: 0; top: 100%; flex-direction: column; align-items: flex-start; gap: 0; background: var(--bg); border-bottom: 1px solid var(--border); padding: 8px 20px 12px; }
+      .menu.open { display: flex; }
+      .menu a { display: block; padding: 10px 0; font-size: 16px; }
+    }
+    @media (max-width: 760px) {
+      section { padding: 56px 0; }
+      .grid, .two, .contact { grid-template-columns: 1fr; }
+      .sticks::after, .sticks i { display: none; }
+      .sticks { height: 32px; }
+      .sticks::before { height: 32px; }
+      .timeline { grid-auto-flow: row; gap: 24px; }
+      .timeline::before { left: 19px; right: auto; top: 0; bottom: 0; border-top: 0; border-left: 2px solid var(--primary); }
+      .timeline.next::before { border-left-style: dashed; }
+      .timeline li { padding-left: 56px; min-height: 40px; }
+      .timeline .dot { position: absolute; left: 0; top: 0; margin: 0; }
+    }
   </style>
 </head>
 <body>
-  <header><div class="logo">ADREMA</div></header>
+  <nav class="nav">
+    <div class="wrap">
+      <a class="logo" href="#domov">ADREMA</a>
+      <ul class="menu" id="menu">
+        <li><a href="#domov" data-en="Home">Domov</a></li>
+        <li><a href="#produkt" data-en="Product">Produkt</a></li>
+        <li><a href="#cesta" data-en="Our Journey">Cesta &amp; Výsledky</a></li>
+        <li><a href="#podpora" data-en="Support Us">Podpora</a></li>
+        <li><a href="#kontakt" data-en="Contact">Kontakt</a></li>
+      </ul>
+      <button class="lang" id="lang" type="button" aria-label="Zmeniť jazyk / Change language">EN</button>
+      <a class="btn small" href="#produkt" data-en="Watch Demo">Vyskúšať Demo</a>
+      <button class="burger" id="burger" type="button" aria-label="Menu" aria-expanded="false" aria-controls="menu"><span class="material-symbols-outlined">menu</span></button>
+    </div>
+  </nav>
 
   <main>
-    <div class="hero">
-      <div class="badge"><span class="material-symbols-outlined">emergency</span>Tiesňová linka 112</div>
-      <h1>Trénujeme dispečerov <span>skôr, než im zazvoní skutočný telefón.</span></h1>
-      <p class="lead">ADREMA je realistický simulátor tiesňových volaní: volajúci v panike, lokalizácia na mape a spätná väzba po každom hovore.</p>
-      <a class="cta" href="#kontakt"><span class="material-symbols-outlined">mail</span>Mám záujem o prístup</a>
+    <div class="hero wrap" id="domov">
+      <p class="eyebrow" data-en="AI Voice Simulator for Emergency Dispatcher Training">AI simulátor pre tréning dispečerov tiesňových liniek</p>
+      <h1>Using AI for a cause that truly matters: saving the most priceless thing there is a human life.</h1>
+      <div class="actions">
+        <a class="btn" href="#produkt"><span class="material-symbols-outlined">play_arrow</span><span data-en="Watch Demo">Pozrieť Demo</span></a>
+        <a class="btn ghost" href="#kontakt" data-en="Get in Touch">Kontaktovať nás</a>
+      </div>
+      <ul class="stats">
+        <li><span class="material-symbols-outlined">forum</span>20+ Expert Interviews</li>
+        <li><span class="material-symbols-outlined">emoji_events</span>Hackathon Winner</li>
+      </ul>
     </div>
 
-    <section>
-      <h2>Ako prebieha tréning</h2>
-      <div class="grid">
-        <div class="tile"><span class="material-symbols-outlined">call</span><h3>Prijmeš hovor</h3><p>Volajúci v panike hovorí hlasom v reálnom čase. Skáče do reči a reaguje na to, čo mu povieš.</p></div>
-        <div class="tile"><span class="material-symbols-outlined">my_location</span><h3>Určíš polohu</h3><p>Niekedy príde automatická poloha z mobilu (AML), inak miesto vyhľadáš a potvrdíš na mape.</p></div>
-        <div class="tile"><span class="material-symbols-outlined">medical_services</span><h3>Vedieš volajúceho</h3><p>Overíš stav zraneného a naviguješ volajúceho prvou pomocou krok po kroku.</p></div>
-        <div class="tile"><span class="material-symbols-outlined">fact_check</span><h3>Dostaneš spätnú väzbu</h3><p>Po hovore vidíš skóre podľa protokolu, chyby a odporúčania.</p></div>
+    <section class="alt" id="produkt">
+      <div class="wrap">
+        <h2 data-en="How ADREMA works">Ako funguje ADREMA</h2>
+        <p class="intro" data-en="A sample transcript of a call between a dispatcher and an AI caller.">Ukážkový prepis hovoru medzi dispečerom a AI volajúcim.</p>
+        <div class="demo">
+          <div class="demo-head">
+            <span><span class="material-symbols-outlined">emergency</span><span data-en="Sample call · fictional scenario">Ukážkový hovor · vymyslený scenár</span></span>
+          </div>
+          <ol class="demo-log" id="demo-log" aria-live="polite"></ol>
+          <div class="demo-foot">
+            <button class="btn" id="demo-play" type="button"><span class="material-symbols-outlined">play_arrow</span><span id="demo-label" data-en="Play Demo Call">Spustiť ukážku hovoru</span></button>
+          </div>
+        </div>
+        <div class="sticks" aria-hidden="true"><i></i><i></i><i></i></div>
+        <div class="grid">
+          <div class="tile"><span class="material-symbols-outlined">crisis_alert</span><h3 data-en="Realistic Crisis Scenarios">Reálne krízové scenáre</h3><p data-en="Calls with different emotions, stress levels and types of emergencies.">Hovory s rôznymi emóciami, stresom a typmi núdzových situácií.</p></div>
+          <div class="tile"><span class="material-symbols-outlined">bolt</span><h3 data-en="Instant AI Feedback">Okamžitá spätná väzba</h3><p data-en="Performance of the student or operator is evaluated right after the call ends.">Vyhodnotenie výkonu študenta alebo operátora ihneď po ukončení hovoru.</p></div>
+          <div class="tile"><span class="material-symbols-outlined">verified_user</span><h3 data-en="Risk-Free Practice">Nulové riziko</h3><p data-en="A safe training environment with no risk of fatal consequences in practice.">Bezpečné prostredie na tréning bez rizika fatálnych následkov v praxi.</p></div>
+        </div>
+        <p class="audience"><span class="material-symbols-outlined">groups</span><span><b data-en="Who it is for:">Pre koho je produkt určený:</b> <span data-en="Secondary medical schools &amp; regional emergency dispatch centres">stredné zdravotnícke školy a krajské operačné strediská</span></span></p>
       </div>
     </section>
 
-    <section>
-      <h2>Prečo ADREMA</h2>
-      <div class="grid">
-        <div class="tile"><span class="material-symbols-outlined">record_voice_over</span><h3>Hlasový hovor s AI volajúcim</h3><p>Žiadne klikanie ani čítanie. Trénuješ rozhovor tak, ako prebieha na linke.</p></div>
-        <div class="tile"><span class="material-symbols-outlined">emergency_home</span><h3>10 scenárov</h3><p>Od bezvedomia a dusenia po stratenú osobu či nehodu na ferrate.</p></div>
-        <div class="tile"><span class="material-symbols-outlined">history</span><h3>Prehľad výsledkov</h3><p>Všetky hovory a ich hodnotenie nájdeš na jednom mieste.</p></div>
+    <section id="cesta">
+      <div class="wrap">
+        <h2 data-en="Our Journey &amp; Validation">Naša cesta a validácia</h2>
+        <p class="intro" data-en="Our achievements, validation from the field and next steps.">Naše úspechy, validácia z terénu a ďalšie kroky.</p>
+        <ol class="timeline">
+          <li><div class="dot"><span class="material-symbols-outlined">emoji_events</span></div><b data-en="Pronea Hackathon">Pronea hackathon</b><span class="t" data-en="Our win, and where our idea was born.">Víťazstvo a miesto, kde vznikol náš nápad.</span></li>
+          <li><div class="dot"><span class="material-symbols-outlined">account_balance</span></div><b data-en="Presidential Summit">Prezidentský samit</b><span class="t" data-en="Participation in the S3 presidential summit.">Účasť na prezidentskom summite S3.</span></li>
+          <li><div class="dot"><span class="material-symbols-outlined">rocket_launch</span></div><b>Startup Weekend Žilina</b></li>
+          <li><div class="dot"><span class="material-symbols-outlined">trending_up</span></div><b data-en="Podnikavá generácia Accelerator">Akcelerátor Podnikavá generácia</b></li>
+        </ol>
+
+        <h3 class="sub" data-en="Next steps">Ďalšie kroky</h3>
+        <ol class="timeline next">
+          <li><div class="dot"><span class="material-symbols-outlined">school</span></div><b data-en="First pilot at a medical school">Spustenie prvého pilotu na zdravotníckej škole</b></li>
+          <li><div class="dot"><span class="material-symbols-outlined">payments</span></div><b data-en="Pre-seed investment">Pre-seed investícia</b></li>
+          <li><div class="dot"><span class="material-symbols-outlined">public</span></div><b data-en="Expansion">Expanzia</b></li>
+        </ol>
+
+        <h3 class="sub" data-en="Validation Highlights">Dôkazy z praxe</h3>
+        <div class="grid two">
+          <div class="tile"><span class="material-symbols-outlined">forum</span><h3 data-en="20+ expert interviews">20+ rozhovorov s expertmi</h3><p data-en="Confirmed a real need on the market.">Potvrdená reálna potreba na trhu.</p></div>
+          <div class="tile"><span class="material-symbols-outlined">handshake</span><h3 data-en="Key partnerships">Kľúčové partnerstvá</h3><p data-en="Interviews and validation with a regional dispatch centre and the Mountain Rescue Service (HZS).">Rozhovory a validácia s Krajským operačným strediskom a Horskou záchrannou službou (HZS).</p></div>
+        </div>
       </div>
     </section>
 
-    <section class="contact" id="kontakt">
-      <h2>Chcete ADREMU vyskúšať?</h2>
-      <p>Simulátor je zatiaľ dostupný len pre pozvaných používateľov. Napíšte nám a dohodneme sa na prístupe.</p>
-      <a class="cta" href="mailto:adremateam@gmail.com"><span class="material-symbols-outlined">mail</span>adremateam@gmail.com</a>
-      <p class="note">ADREMA je vzdelávací simulátor, nie skutočná tiesňová linka. V núdzi volajte 112. Nejde o oficiálny produkt IZS, HZS ani MV SR.</p>
+    <section class="alt" id="podpora">
+      <div class="wrap">
+        <h2 data-en="How You Can Support Us">Podporte náš projekt</h2>
+        <p class="intro" data-en="We are looking for early-stage support and partnerships.">Aktuálne hľadáme možnosti pre posun projektu na ďalšiu úroveň.</p>
+        <div class="grid">
+          <div class="tile"><span class="material-symbols-outlined">savings</span><h3 data-en="Pre-Seed Investment">Pre-Seed investícia</h3><p data-en="We are looking for capital to cover AI development and pilot testing.">Hľadáme kapitál na pokrytie nákladov na vývoj AI a testovanie pilotu.</p></div>
+          <div class="tile"><span class="material-symbols-outlined">door_open</span><h3 data-en="Door Opening">Otváranie dverí</h3><p data-en="We are looking for contacts at secondary medical schools and decision-makers in public administration.">Hľadáme kontakty na stredné zdravotnícke školy a rozhodovateľov vo verejnej správe.</p></div>
+          <div class="tile"><span class="material-symbols-outlined">psychology</span><h3>Mentoring</h3><p data-en="We welcome advice on Public Sector Procurement and Go-To-Market strategy.">Uvítame rady v oblasti Public Sector Procurement a Go-To-Market stratégie.</p></div>
+        </div>
+        <div class="actions" style="margin-top:32px"><a class="btn" href="#kontakt" data-en="Contact Us">Kontaktujte nás</a></div>
+      </div>
+    </section>
+
+    <section id="kontakt">
+      <div class="wrap">
+        <h2 style="margin-bottom:32px" data-en="Get in Touch">Napíšte nám</h2>
+        <div class="contact">
+          <form class="tile" id="contact-form">
+            <label for="c-name" data-en="Name">Meno</label>
+            <input id="c-name" type="text" autocomplete="name" required maxlength="100" />
+            <label for="c-email">E-mail</label>
+            <input id="c-email" type="email" autocomplete="email" required maxlength="150" />
+            <label for="c-message" data-en="Message">Správa</label>
+            <textarea id="c-message" required maxlength="2000"></textarea>
+            <button class="btn" type="submit" data-en="Send Message">Odoslať správu</button>
+            <p class="form-note" id="form-note" hidden role="status" data-en="Your e-mail app has opened with the message ready. Press send there. If nothing happened, write to us directly.">Otvorila sa vaša e-mailová aplikácia s pripravenou správou. Odošlite ju v nej. Ak sa nič nestalo, napíšte nám priamo.</p>
+          </form>
+          <div class="direct">
+            <p data-en="Official e-mail:">Oficiálny e-mail:</p>
+            <a href="mailto:adremateam@gmail.com">adremateam@gmail.com</a>
+          </div>
+        </div>
+      </div>
     </section>
   </main>
 
-  <footer>ADREMA · Adaptive Rescue Management Simulator · <a href="podmienky.html" style="color:inherit">Podmienky používania</a> · <a href="sukromie.html" style="color:inherit">Ochrana súkromia</a> · Kontakt: <a href="mailto:adremateam@gmail.com" style="color:inherit">adremateam@gmail.com</a></footer>
+  <footer>
+    <div class="wrap">
+      <div>© 2026 ADREMA. All rights reserved. | <a href="sukromie.html" data-en="Privacy Policy">Súkromie</a> | <a href="podmienky.html" data-en="Terms of Use">Podmienky používania</a></div>
+      <div data-en="ADREMA is an educational simulator, not a real emergency line. In an emergency call 112. It is not an official product of the IZS, HZS or the Ministry of Interior of the Slovak Republic.">ADREMA je vzdelávací simulátor, nie skutočná tiesňová linka. V núdzi volajte 112. Nejde o oficiálny produkt IZS, HZS ani MV SR.</div>
+    </div>
+  </footer>
 
   <script>
-    // Rovnaký motív ako v simulátore (svetlý / tmavý)
-    try {
-      const theme = localStorage.getItem('theme');
-      if (theme === 'dark') document.documentElement.classList.add('dark');
-      if (theme === 'light') document.documentElement.classList.add('light');
-    } catch (e) { }
+    const DEMO = {
+      sk: {
+        me: 'Dispečer', them: 'Volajúci', end: 'Hovor ukončený · nasleduje skóre, chyby a odporúčania',
+        lines: [
+          [1, 'Linka 112, čo sa stalo?'],
+          [0, 'Prosím rýchlo! Môj priateľ leží v kúpeľni a nereaguje!'],
+          [1, 'Kde presne ste? Povedzte mi adresu.'],
+          [0, 'Hlavná dvanásť, v Žiline! Druhé poschodie!'],
+          [1, 'Dýcha? Pozrite sa, či sa mu hýbe hrudník.'],
+          [0, 'Neviem... áno, myslím že áno, ale veľmi slabo!'],
+          [1, 'Pomoc je na ceste. Ostaňte pri ňom, poviem vám, čo máte robiť.']
+        ]
+      },
+      en: {
+        me: 'Dispatcher', them: 'Caller', end: 'Call ended · score, mistakes and recommendations follow',
+        lines: [
+          [1, 'Emergency line 112, what happened?'],
+          [0, 'Please hurry! My friend is lying in the bathroom and not responding!'],
+          [1, 'Where exactly are you? Tell me the address.'],
+          [0, 'Hlavná twelve, in Žilina! Second floor!'],
+          [1, 'Is he breathing? Look whether his chest is moving.'],
+          [0, 'I don’t know... yes, I think so, but very weakly!'],
+          [1, 'Help is on the way. Stay with him, I will tell you what to do.']
+        ]
+      }
+    };
+
+    let lang = 'sk';
+    try { if (localStorage.getItem('adrema_site_lang') === 'en') lang = 'en'; } catch (e) { }
+
+    const log = document.getElementById('demo-log');
+    let demoTimer = null;
+
+    function stopDemo() {
+      clearTimeout(demoTimer);
+      log.textContent = '';
+    }
+
+    function addLine([isMe, text]) {
+      const d = DEMO[lang];
+      const li = document.createElement('li');
+      if (isMe) li.className = 'me';
+      const who = document.createElement('b');
+      who.textContent = isMe ? d.me : d.them;
+      li.append(who, text);
+      log.append(li);
+    }
+
+    function playDemo() {
+      stopDemo();
+      const d = DEMO[lang];
+      const finish = () => {
+        const li = document.createElement('li');
+        li.className = 'end';
+        li.textContent = d.end;
+        log.append(li);
+      };
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        d.lines.forEach(addLine);
+        finish();
+        return;
+      }
+      let i = 0;
+      const next = () => {
+        if (i >= d.lines.length) return finish();
+        addLine(d.lines[i++]);
+        demoTimer = setTimeout(next, 1500);
+      };
+      next();
+    }
+
+    function applyLang() {
+      document.documentElement.lang = lang;
+      document.querySelectorAll('[data-en]').forEach(el => {
+        if (el.dataset.sk === undefined) el.dataset.sk = el.textContent;
+        el.textContent = lang === 'en' ? el.dataset.en : el.dataset.sk;
+      });
+      document.title = lang === 'en' ? 'ADREMA – AI Voice Simulator for Emergency Dispatcher Training' : 'ADREMA – AI simulátor pre tréning dispečerov';
+      document.getElementById('lang').textContent = lang === 'en' ? 'SK' : 'EN';
+      stopDemo();
+    }
+
+    document.getElementById('demo-play').addEventListener('click', playDemo);
+
+    document.getElementById('lang').addEventListener('click', () => {
+      lang = lang === 'en' ? 'sk' : 'en';
+      try { localStorage.setItem('adrema_site_lang', lang); } catch (e) { }
+      applyLang();
+    });
+
+    const menu = document.getElementById('menu');
+    const burger = document.getElementById('burger');
+    burger.addEventListener('click', () => {
+      burger.setAttribute('aria-expanded', menu.classList.toggle('open'));
+    });
+    menu.addEventListener('click', (e) => {
+      if (e.target.closest('a')) {
+        menu.classList.remove('open');
+        burger.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    // Web je statický, správu preto odošle e-mailová aplikácia návštevníka
+    document.getElementById('contact-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('c-name').value.trim();
+      const email = document.getElementById('c-email').value.trim();
+      const message = document.getElementById('c-message').value.trim();
+      const subject = encodeURIComponent('ADREMA – správa od ' + name);
+      const body = encodeURIComponent(message + '\n\n' + name + '\n' + email);
+      location.href = 'mailto:adremateam@gmail.com?subject=' + subject + '&body=' + body;
+      document.getElementById('form-note').hidden = false;
+    });
+
+    applyLang();
   </script>
 </body>
 </html>
