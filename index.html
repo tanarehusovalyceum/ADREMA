@@ -102,7 +102,13 @@
     .demo-log li b { display: block; font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); margin-bottom: 2px; }
     .demo-log li.me { align-self: flex-end; background: var(--primary); color: var(--on-primary); }
     .demo-log li.me b { color: inherit; }
-    .demo-log li.end { align-self: center; max-width: 100%; background: none; color: var(--muted); font-weight: 700; text-align: center; }
+    .demo-log li.fb { align-self: stretch; max-width: 100%; background: none; border: 2px solid var(--primary); padding: 14px; }
+    .fb-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
+    .fb-head b { margin: 0; }
+    .fb-score { font-size: 20px; font-weight: 900; color: var(--primary); white-space: nowrap; }
+    .fb-good::before { content: '✓  '; color: var(--primary); font-weight: 900; }
+    .fb-tip { margin-top: 6px; color: var(--muted); }
+    .fb-tip::before { content: '→  '; font-weight: 900; }
     .demo-foot { padding: 0 18px 18px; text-align: center; }
 
     /* Paličky z ukážky k funkciám */
@@ -290,7 +296,12 @@
   <script>
     const DEMO = {
       sk: {
-        me: 'Dispečer', them: 'Volajúci', end: 'Hovor ukončený · nasleduje skóre, chyby a odporúčania',
+        me: 'Dispečer', them: 'Volajúci',
+        fb: {
+          title: 'Spätná väzba pre dispečera · ukážka', score: 86,
+          good: ['Poloha zistená hneď na začiatku', 'Dýchanie overené', 'Pomoc potvrdená a volajúci upokojený'],
+          tip: 'Nabudúce si over aj telefónne číslo volajúceho.'
+        },
         lines: [
           [1, 'Linka 112, čo sa stalo?'],
           [0, 'Prosím rýchlo! Môj priateľ leží v kúpeľni a nereaguje!'],
@@ -302,7 +313,12 @@
         ]
       },
       en: {
-        me: 'Dispatcher', them: 'Caller', end: 'Call ended · score, mistakes and recommendations follow',
+        me: 'Dispatcher', them: 'Caller',
+        fb: {
+          title: 'Dispatcher feedback · sample', score: 86,
+          good: ['Location established right away', 'Breathing checked', 'Help confirmed and caller reassured'],
+          tip: 'Next time also confirm the caller\u2019s phone number.'
+        },
         lines: [
           [1, 'Emergency line 112, what happened?'],
           [0, 'Please hurry! My friend is lying in the bathroom and not responding!'],
@@ -341,8 +357,18 @@
       const d = DEMO[lang];
       const finish = () => {
         const li = document.createElement('li');
-        li.className = 'end';
-        li.textContent = d.end;
+        li.className = 'fb';
+        const line = (tag, cls, text) => {
+          const el = document.createElement(tag);
+          if (cls) el.className = cls;
+          el.textContent = text;
+          return el;
+        };
+        const head = line('div', 'fb-head', '');
+        head.append(line('b', '', d.fb.title), line('span', 'fb-score', d.fb.score + ' / 100'));
+        li.append(head);
+        d.fb.good.forEach(text => li.append(line('div', 'fb-good', text)));
+        li.append(line('div', 'fb-tip', d.fb.tip));
         log.append(li);
       };
       if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
