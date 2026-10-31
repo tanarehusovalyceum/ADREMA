@@ -259,15 +259,17 @@
       <div class="wrap">
         <h2 style="margin-bottom:32px" data-en="Get in Touch">Napíšte nám</h2>
         <div class="contact">
-          <form class="tile" id="contact-form">
+          <form class="tile" id="contact-form" style="position:relative">
             <label for="c-name" data-en="Name">Meno</label>
             <input id="c-name" type="text" autocomplete="name" required maxlength="100" />
             <label for="c-email">E-mail</label>
             <input id="c-email" type="email" autocomplete="email" required maxlength="150" />
             <label for="c-message" data-en="Message">Správa</label>
             <textarea id="c-message" required maxlength="2000"></textarea>
-            <button class="btn" type="submit" data-en="Send Message">Odoslať správu</button>
-            <p class="form-note" id="form-note" hidden role="status" data-en="Your e-mail app has opened with the message ready. Press send there. If nothing happened, write to us directly.">Otvorila sa vaša e-mailová aplikácia s pripravenou správou. Odošlite ju v nej. Ak sa nič nestalo, napíšte nám priamo.</p>
+            <input id="c-honey" type="text" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px" />
+            <button class="btn" id="c-send" type="submit" data-en="Send Message">Odoslať správu</button>
+            <p class="form-note" id="form-ok" hidden role="status" data-en="Thank you, your message has been sent.">Ďakujeme, správa bola odoslaná.</p>
+            <p class="form-note" id="form-err" hidden role="alert" style="color:var(--accent)" data-en="The message could not be sent. Please write to us at adremateam@gmail.com.">Správu sa nepodarilo odoslať. Napíšte nám prosím na adremateam@gmail.com.</p>
           </form>
           <div class="direct">
             <p data-en="Official e-mail:">Oficiálny e-mail:</p>
@@ -388,16 +390,37 @@
       }
     });
 
-    // Web je statický, správu preto odošle e-mailová aplikácia návštevníka
-    document.getElementById('contact-form').addEventListener('submit', (e) => {
+    // Web je statický, správu preto doručí služba FormSubmit na adremateam@gmail.com
+    const form = document.getElementById('contact-form');
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const name = document.getElementById('c-name').value.trim();
-      const email = document.getElementById('c-email').value.trim();
-      const message = document.getElementById('c-message').value.trim();
-      const subject = encodeURIComponent('ADREMA – správa od ' + name);
-      const body = encodeURIComponent(message + '\n\n' + name + '\n' + email);
-      location.href = 'mailto:adremateam@gmail.com?subject=' + subject + '&body=' + body;
-      document.getElementById('form-note').hidden = false;
+      const ok = document.getElementById('form-ok');
+      const err = document.getElementById('form-err');
+      const send = document.getElementById('c-send');
+      ok.hidden = err.hidden = true;
+      send.disabled = true;
+      try {
+        const name = document.getElementById('c-name').value.trim();
+        const res = await fetch('https://formsubmit.co/ajax/adremateam@gmail.com', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify({
+            name,
+            email: document.getElementById('c-email').value.trim(),
+            message: document.getElementById('c-message').value.trim(),
+            _honey: document.getElementById('c-honey').value,
+            _subject: 'ADREMA web – správa od ' + name,
+            _template: 'table'
+          })
+        });
+        const data = await res.json();
+        if (!res.ok || String(data.success) !== 'true') throw new Error(data.message || 'send failed');
+        form.reset();
+        ok.hidden = false;
+      } catch (error) {
+        err.hidden = false;
+      }
+      send.disabled = false;
     });
 
     applyLang();
