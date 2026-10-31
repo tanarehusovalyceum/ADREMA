@@ -1,5 +1,5 @@
 # Po každom push do main zverejní web na GitHub Pages (https://<účet>.github.io/<repozitár>/).
-# config.js sa vytvorí z GitHub Secrets VAPI_PUBLIC_KEY a ELEVENLABS_VOICE_ID (voliteľne GROQ_API_KEY, VAPI_LLM_MODEL, ELEVENLABS_MODEL).
+# simulator.html sa zašifruje heslom zo Secret ADREMA_ACCESS_PASSWORD a vloží sa doň config.js z GitHub Secrets VAPI_PUBLIC_KEY a ELEVENLABS_VOICE_ID (voliteľne GROQ_API_KEY, VAPI_LLM_MODEL, ELEVENLABS_MODEL).
 name: Nasadenie na GitHub Pages
 
 on:
@@ -29,6 +29,7 @@ jobs:
       - name: Pripraviť web a config.js zo Secrets
         env:
           SKIP_HTACCESS: '1'
+          ADREMA_ACCESS_PASSWORD: ${{ secrets.ADREMA_ACCESS_PASSWORD }}
           VAPI_PUBLIC_KEY: ${{ secrets.VAPI_PUBLIC_KEY }}
           ELEVENLABS_VOICE_ID: ${{ secrets.ELEVENLABS_VOICE_ID }}
           ELEVENLABS_VOICE_ID_FEMALE: ${{ secrets.ELEVENLABS_VOICE_ID_FEMALE }}

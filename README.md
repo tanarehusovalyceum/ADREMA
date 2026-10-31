@@ -7,7 +7,7 @@ lokalizácia na mape (AML / BTS / ručné vyhľadanie) a spätná väzba po kaž
 
 | Súbor | Obsah |
 |---|---|
-| `index.html` | Úvodná stránka (landing) s tlačidlom do simulátora |
+| `index.html` | Verejné predstavenie simulátora s kontaktom (bez odkazu do simulátora) |
 | `simulator.html` | Samotný simulátor |
 | `login.html` | Prihlásenie menom (bez hesla – pozri „Bezpečnosť“) |
 | `onboarding.html` | Krátky úvod pri prvom prihlásení |
@@ -17,6 +17,7 @@ lokalizácia na mape (AML / BTS / ručné vyhľadanie) a spätná väzba po kaž
 | `.htaccess` | Websupport: presmerovanie na HTTPS (bez neho nefunguje mikrofón) |
 | `.github/workflows/deploy.yml` | Automatické nasadenie na Websupport po každom `git push` |
 | `scripts/build-site.mjs`, `scripts/build-config.mjs` | Pri nasadení pripravia web do `_site/` a vytvoria `config.js` z premenných prostredia |
+| `scripts/protect-page.mjs` | Pri nasadení zašifruje `simulator.html` heslom `ADREMA_ACCESS_PASSWORD` (GitHub Secret aj Vercel env) a vloží doň `config.js` |
 | `vercel.json`, `.vercelignore` | Nastavenia pre Vercel |
 | `spustit.command` | Lokálne spustenie dvojklikom (Mac) |
 
