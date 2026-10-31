@@ -1,7 +1,7 @@
 // Pripraví priečinok _site so súbormi pre web + config.js z premenných prostredia.
 // Používa ho Vercel (vercel.json → buildCommand) aj GitHub Actions (nasadenie na Websupport).
 // simulator.html sa zverejní len zašifrovaný heslom ADREMA_ACCESS_PASSWORD, config.js je vložený v ňom.
-import { mkdirSync, copyFileSync, readFileSync, writeFileSync, rmSync } from 'node:fs';
+import { mkdirSync, copyFileSync, cpSync, readFileSync, writeFileSync, rmSync } from 'node:fs';
 import { buildConfig } from './build-config.mjs';
 import { protectPage } from './protect-page.mjs';
 
@@ -19,6 +19,7 @@ try {
   rmSync('_site', { recursive: true, force: true });
   mkdirSync('_site');
   FILES.forEach(f => copyFileSync(f, '_site/' + f));
+  cpSync('fotky', '_site/fotky', { recursive: true });
   writeFileSync('_site/simulator.html', protectPage(simulator.replace(configTag, () => `<script>${config}</script>`), password));
   writeFileSync('_site/robots.txt', 'User-agent: *\nDisallow: /simulator.html\nDisallow: /login.html\nDisallow: /onboarding.html\nDisallow: /feedback.html\n');
   console.log('Web pripravený v _site/: ' + [...FILES, 'simulator.html (zašifrovaný)', 'robots.txt'].join(', '));

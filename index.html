@@ -125,6 +125,8 @@
     .timeline .dot { position: relative; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; background: var(--primary); color: var(--on-primary); margin-bottom: 12px; }
     .timeline.next .dot { background: var(--card); color: var(--primary); border: 2px dashed var(--primary); }
     .timeline .dot .material-symbols-outlined { font-size: 20px; }
+    .timeline .photo { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 10px; margin-bottom: 10px; }
+    .timeline .photo.top { object-position: top; }
     .timeline b { display: block; font-size: 15px; margin-bottom: 4px; }
     .timeline span.t { color: var(--muted); }
     .two { grid-template-columns: repeat(2, 1fr); }
@@ -221,10 +223,10 @@
         <h2 data-en="Our Journey &amp; Validation">Naša cesta a validácia</h2>
         <p class="intro" data-en="Our achievements, validation from the field and next steps.">Naše úspechy, validácia z terénu a ďalšie kroky.</p>
         <ol class="timeline">
-          <li><div class="dot"><span class="material-symbols-outlined">emoji_events</span></div><b data-en="Pronea Hackathon">Pronea hackathon</b><span class="t" data-en="Our win, and where our idea was born.">Víťazstvo a miesto, kde vznikol náš nápad.</span></li>
-          <li><div class="dot"><span class="material-symbols-outlined">account_balance</span></div><b data-en="Presidential Summit">Prezidentský samit</b><span class="t" data-en="Participation in the S3 presidential summit.">Účasť na prezidentskom summite S3.</span></li>
-          <li><div class="dot"><span class="material-symbols-outlined">rocket_launch</span></div><b>Startup Weekend Žilina</b></li>
-          <li><div class="dot"><span class="material-symbols-outlined">trending_up</span></div><b data-en="Podnikavá generácia Accelerator">Akcelerátor Podnikavá generácia</b></li>
+          <li><div class="dot"><span class="material-symbols-outlined">emoji_events</span></div><img class="photo" src="fotky/pronea-hackathon.jpg" alt="Pronea Hackathon 2026" width="1091" height="851" loading="lazy" /><b data-en="Pronea Hackathon">Pronea hackathon</b><span class="t" data-en="Our win, and where our idea was born.">Víťazstvo a miesto, kde vznikol náš nápad.</span></li>
+          <li><div class="dot"><span class="material-symbols-outlined">account_balance</span></div><img class="photo top" src="fotky/summit.jpg" alt="S3 Bratislava Summit 2026" width="994" height="878" loading="lazy" /><b data-en="Presidential Summit">Prezidentský samit</b><span class="t" data-en="Participation in the S3 Bratislava Summit 2026.">Účasť na S3 Bratislava Summit 2026.</span></li>
+          <li><div class="dot"><span class="material-symbols-outlined">bolt</span></div><img class="photo" src="fotky/sparx.jpg" alt="SPARX" width="1080" height="720" loading="lazy" /><b>SPARX</b></li>
+          <li><div class="dot"><span class="material-symbols-outlined">rocket_launch</span></div><img class="photo top" src="fotky/startup-weekend-zilina.jpg" alt="Startup Weekend Žilina" width="1153" height="953" loading="lazy" /><b>Startup Weekend Žilina</b></li>
         </ol>
 
         <h3 class="sub" data-en="Next steps">Ďalšie kroky</h3>
